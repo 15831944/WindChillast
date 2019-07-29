@@ -27,7 +27,6 @@ CPbomCreate::CPbomCreate(CString partNumber)
 BOOL CPbomCreate::CreatePbom()
 {
 	CWindChillSetting::PROCUDEID.clear();
-
 	TiXmlDocument doc;
 	TiXmlDocument Ebomdoc;
 
@@ -155,9 +154,7 @@ void CPbomCreate::AddPbomToolNode(TiXmlElement *Node, PartInfo &partinfo, pair<s
 	{
 		CWindChillSetting::GYJID.push_back(Map.first.c_str());
 	}
-	
 	CWindChillSetting::PROCUDEID.push_back(Map.first.c_str());
-	
 
 	Node->SetAttribute("srcname", (_bstr_t)partinfo.value["srcname"].c_str());
 
@@ -273,7 +270,6 @@ void CPbomCreate::AddPbomToolNode(TiXmlElement *Node, PartInfo &partinfo, pair<s
 	}
 	else
 	{
-
 		//Position
 		TiXmlElement  *Position = new TiXmlElement("Position");
 		Node->LinkEndChild(Position);

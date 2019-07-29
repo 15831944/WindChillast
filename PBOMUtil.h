@@ -5,6 +5,27 @@ using namespace std;
 
 class TiXmlElement;
 
+
+class AttrInfo
+{
+	public:
+		AttrInfo()
+		{
+
+		}
+		~AttrInfo()
+		{
+			SolidInfo.clear();
+			PropInfo.clear();
+		}
+
+	AttrInfo & operator= (const AttrInfo & val);
+public:
+	std::map<CString,CString> SolidInfo;
+	std::map<CString,CString> PropInfo;
+};
+
+
 class CPosition
 {
 public:
@@ -110,6 +131,9 @@ public:
 	bool CreatePbomExchange(CString strAstXml,CString strWindchillXml,CString topNumber);	//Éú³Épbom.xml   exchange
 	bool GetAstInfo(CString strXml, vector<CAstNodeInfo> &nodeinfos);  //exchange
 
+	bool PbomExchange(CString strAstXml,CString strWindchillXml,CString topNumber);
+
+
 	bool CreatePbomIop(CString strAstXml, CString strWindchillXml, CString topNumber);
 	bool GetAstInfoIop(CString strXml, vector<CAstNodeInfo> &nodeinfos);
 
@@ -125,6 +149,8 @@ private:
 	TiXmlElement* CreateElement( CWindNode* pNode,const CPosition &pos);
 
 	void Createchild(CWindNode* pNode,TiXmlElement* ele, const vector<CWindRelation> &windRelationVec,map<CString,CWindNode*> &windNodes);
+
+	void LoadAttr(CString path,vector<AttrInfo> & attrinfo);
 protected:
 	CString m_strAst;
 	CString m_strWindchill;

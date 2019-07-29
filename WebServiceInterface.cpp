@@ -710,6 +710,8 @@ CString CWebServiceInterface::CheckInDoc(CString  operType, CString inputxml)
 		ch = NULL;
 	}
 
+	
+
 	if (str)
 	{
 		delete[]str;

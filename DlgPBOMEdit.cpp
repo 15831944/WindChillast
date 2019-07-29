@@ -25,6 +25,7 @@
 #include "common.h"
 #include "PBomCreate.h"
 
+#include "CreatePbom.h"
 
 
 #define  MSG_FILE_NEW WM_USER + 2089
@@ -459,7 +460,6 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 	{
 		if (QueryType_EBOM == m_nQueryType)
 		{
-
 			CString strXmlcontent = m_WebServiceInterface.getBom(operType, partNumber);
 			m_PBOMxml.Parse(strXmlcontent.GetBuffer());
 			strXmlcontent.ReleaseBuffer();
@@ -601,7 +601,11 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 								//获取转换后的xml文件，属性更新后导入到ast
 								if (PathFileExists(strXml))
 								{
-									if (CWindChillSetting::m_iConvertMode != 1 )//exchange 
+									bool isIop=true;
+									JudgeIsIopXml(strXml,isIop);
+
+
+									if (!isIop)//exchange 
 									{
 										//把属性写入xml中
 										CPBOMUtil util;
@@ -709,22 +713,25 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 								{
 									//获取转换后的xml文件，属性更新后导入到ast
 								
-										if (CWindChillSetting::m_iConvertMode != 1 )//exchange 
-										{
-											//把属性写入xml中
-											CPBOMUtil util;
+									bool isIop=true;
+									JudgeIsIopXml(strXml,isIop);
 
-											util.CreatePbomExchange(strXml, strXmlcontent, partNumber);
-											documentAnsiToutf8(strXml);
-										}
-										else
-										{
-											CPBOMUtil util;
-											//strXml = "C:\\Users\\Administrator\\Desktop\\39909B84-206E-4BE4-BD29-631CD9B81839\\D6101000.xml";
+									if (!isIop)//exchange 
+									{
+										//把属性写入xml中
+										CPBOMUtil util;
 
-											util.CreatePbomIop(strXml, strXmlcontent, partNumber);
-											documentAnsiToutf8(strXml);
-										}
+										util.CreatePbomExchange(strXml, strXmlcontent, partNumber);
+										documentAnsiToutf8(strXml);
+									}
+									else
+									{
+										CPBOMUtil util;
+										//strXml = "C:\\Users\\Administrator\\Desktop\\39909B84-206E-4BE4-BD29-631CD9B81839\\D6101000.xml";
+
+										util.CreatePbomIop(strXml, strXmlcontent, partNumber);
+										documentAnsiToutf8(strXml);
+									}
 
 
 									auto pProduct = m_pModel->GetProduct();
@@ -766,8 +773,8 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 
 						}
 					}
-				
-						MessageBox("查询结果为空", APS_MSGBOX_TITIE, MB_OK);
+					else
+						MessageBox("数据库查询结果为空", APS_MSGBOX_TITIE, MB_OK);
 					sqlresult->Close();
 					sqlresult = NULL;
 				}
@@ -816,7 +823,6 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 				MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
 				return FALSE;
 			}
-
 			//bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
 			//if (!bSucc)
 			//{
@@ -825,7 +831,6 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 			//	MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
 			//	return FALSE;
 			//} 
-
 
 			if (strFTPName.Find(_T(".zip")) >= 0)  //传递的压缩文件包
 			{
@@ -862,11 +867,13 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 							auto name = GetMainFileName(fullpath);
 							if (name.CompareNoCase("Pbom") == 0)
 							{
+
 								CPbomCreate PbomCreate(fullpath, partNumber);
 
 								PbomCreate.CreatePbom();
 								strXml =GetFilePath(fullpath)+"files\\Pbom.xml";
 								documentAnsiToutf8(strXml);
+
 							}
 						}
 					}

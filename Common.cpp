@@ -12,6 +12,7 @@
 #include "tlhelp32.h"
 #include "Common.h"
 #include "WindChillSetting.h"
+#include "tinyxml.h"
 
 using namespace std;
 
@@ -378,5 +379,27 @@ CString changePartName(CString s)
 	}
 
 	return name;
+}
+
+//判断xml是iop转换出来的，若是 isIop为true ，否则isIop false
+void JudgeIsIopXml(CString xmlpath,bool &isIop)
+{
+	TiXmlDocument doc;
+	if (!doc.LoadFile(xmlpath.GetBuffer(xmlpath.GetLength())))
+	{
+		return ;
+	}
+	
+	TiXmlElement *root = doc.FirstChildElement();
+	auto test =root->Value();
+	if(CString(root->Value()) == CString("KMPP_EBOM"))
+	{
+		isIop =false;   //为exchange
+	}
+	else
+	{
+		isIop =true;  //为iop
+	}
+
 }
 

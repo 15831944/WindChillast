@@ -28,6 +28,8 @@ protected:
 	void InitList();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 	virtual BOOL OnInitDialog();
+
+	void ImportEquies(int row );
 	afx_msg void OnQuery();
 	afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnSize(UINT nType, int cx, int cy);

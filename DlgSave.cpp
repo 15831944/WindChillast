@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "DlgSave.h"
-
+#include "common.h"
 
 // CDlgSave ¶Ô»°¿ò
 
@@ -35,7 +35,9 @@ BOOL CDlgSave::OnInitDialog()
 	SHGetSpecialFolderPath(this->GetSafeHwnd(), pBuf, CSIDL_PERSONAL, 0);
 	//end add by xjt in 2018.11.22 for 70561
 	//GetCurrentDirectory(MAX_PATH, pBuf);
-	CString path = CString(pBuf) + "\\CLXHDEB_"+partNumber+".xml";
+
+	auto Number =changePartName(partNumber);
+	CString path = CString(pBuf) + "\\CLXHDEB_"+Number+".xml";
 	pEdit->SetWindowText(path);
 
 	SetWindowText(m_Caption);
@@ -68,7 +70,8 @@ void CDlgSave::OnBnClickedAwindchillButtonPdfpath()
 
 	if (strPath !="")
 	{
-		CString sName = strPath + "CLXHDEB_"+partNumber+".xml";
+		auto Number =changePartName(partNumber);
+		CString sName = strPath + "CLXHDEB_"+Number+".xml";
 		pEdit->SetWindowText(sName);
 		m_sName = sName;
 	}

@@ -24,7 +24,6 @@ CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetti
 CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetting::m_strChangeinfoMatch;
 
 CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetting::m_strResourceTypeMatch;
-
 CString CWindChillSetting::m_strFTPURL = _T("");
 CString CWindChillSetting::m_strFTPPort = _T("");
 CString CWindChillSetting::m_strFTPUserName = _T("");
@@ -50,9 +49,6 @@ std::map<CString, CString> CWindChillSetting::changeValue;
 
 std::vector<std::string>  CWindChillSetting::GYJID;
 std::vector<std::string>  CWindChillSetting::PROCUDEID;    //所有产品ID
-
-
-
 int  CWindChillSetting::m_iConvertMode=0;//转换方式： =1 InterOP，= 0 exchange
 //////////////////////////////////////////////////////////////////////////////////////////////////
 namespace KmWindChillCommon
@@ -322,7 +318,6 @@ bool CWindChillSetting::LoadResourceTyoeMatch()
 	bool bRet = ReadProAry(_T("工艺装备类型"), m_strResourceTypeMatch);
 	return bRet;
 }
-
 bool CWindChillSetting::LoadMaterialConfig()
 {
 	if (m_strIni.IsEmpty())

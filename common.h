@@ -45,3 +45,5 @@ void documentAnsiToutf8(CString strXml);
 //若保存的partName中含有非法字符();例如/\.*则不能将文件保存
 CString changePartName(CString s=_T(""));
 
+//判断是否为IopXml 
+void JudgeIsIopXml(CString xmlpath,bool & isIop );

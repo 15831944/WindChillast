@@ -117,6 +117,9 @@
     <ClCompile Include="DlgPDFExport.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CreatePbom.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -234,6 +237,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DlgPDFExport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatePbom.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

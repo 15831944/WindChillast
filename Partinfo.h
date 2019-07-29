@@ -20,6 +20,7 @@ public:
 		Getvalue();
 	}
 
+	~PartInfo();
 	std::map<std::string, std::string > value;
 	std::vector<std::map <std::string,std::string>> childvalue;
 

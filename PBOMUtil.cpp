@@ -5,6 +5,9 @@
 #include <string>
 #include "xml.h"
 #include "UtilityFunction.h"
+#include "Partinfo.h"
+#include "common.h"
+
 CPBOMUtil::CPBOMUtil(void)
 {
 	m_strRootNumber = _T("");
@@ -65,7 +68,6 @@ BOOL FindRootNode(IN	MSXML2::IXMLDOMElementPtr xml)
 bool CPBOMUtil::CreatePbomExchange(CString strAstXml,CString strWindchillXml,CString topNumber)
 {
 	CWindChillSetting::PROCUDEID.clear();
-
 	vector<CAstNodeInfo> nodeInfos;
 	nodeInfos.clear();
 	if (!GetAstInfo(strAstXml,nodeInfos)) return false;
@@ -87,7 +89,10 @@ bool CPBOMUtil::CreatePbomExchange(CString strAstXml,CString strWindchillXml,CSt
 
 bool CPBOMUtil::CreatePbomIop(CString strAstXml, CString strWindchillXml, CString topNumber)
 {
-	CWindChillSetting::PROCUDEID.clear();
+	CString attrpath =GetFilePath(strAstXml)+GetMainFileName(strAstXml)+_T(".attr");
+	vector<AttrInfo> info;
+	LoadAttr(strAstXml,info);
+
 
 	vector<CAstNodeInfo> nodeInfos;
 	nodeInfos.clear();
@@ -218,6 +223,20 @@ BOOL ReadAssembleInfo(MSXML2::IXMLDOMElementPtr	pAssembleNode,bool bTopLevel,boo
 			_variant_t tAttr = pRefLink->getAttribute(_T("Id"));
 			CString strPartRefID((char*)(_bstr_t)tAttr);
 
+			/*
+			int ChinesePos =0;
+			for (auto i=7;i<strPartRefID.GetLength();i++)
+			{
+				auto temp =strPartRefID[i];
+				if (strPartRefID[i] < 0)
+				{
+					ChinesePos =i;
+					break;
+				}
+			
+			}
+
+			*/
 			auto space =strPartRefID.FindOneOf(" ");
 			if (space!=-1)
 			{
@@ -226,6 +245,17 @@ BOOL ReadAssembleInfo(MSXML2::IXMLDOMElementPtr	pAssembleNode,bool bTopLevel,boo
 			temp.SetNumber(strPartRefID);
 			space =parent.FindOneOf(" ");
 
+			/*
+			for (auto i=7;i<parent.GetLength();i++)
+			{
+				if (parent[i]<0 )
+				{
+					ChinesePos =i;
+					break;
+				}
+
+			}
+			*/
 			if (space!=-1)
 			{
 				parent=parent.Left(space);
@@ -243,8 +273,6 @@ BOOL ReadAssembleInfo(MSXML2::IXMLDOMElementPtr	pAssembleNode,bool bTopLevel,boo
 				auto filename =GetMainFileName(result->second)+".hsf";
 				temp.AddProp("filename",filename );
 			}
-
-			
 
 			nodeinfos.push_back(temp);
 			
@@ -419,7 +447,6 @@ bool CPBOMUtil::GetAstInfoIop(CString strXml, vector<CAstNodeInfo>& nodeinfos)
 	if (finder.FindFile(strXMLFile.Mid(0, strXMLFile.ReverseFind('.')) + _T(".attr")))
 	{
 		vbool = xmlAttr->load(_variant_t(strXMLFile.Mid(0, strXMLFile.ReverseFind('.')) + _T(".attr")));
-		
 		m_pAttrRoot = CXML::ReadRootElement(xmlAttr, _T("APS_Model_Attr"));
 	}
 	finder.Close();
@@ -592,6 +619,87 @@ bool CPBOMUtil::GetAstInfo(CString strXml,vector<CAstNodeInfo> &nodeinfos)
 
 		TraverseAstXml(pXmlDoc, pNode, nodeinfos,_T(""), TRUE);
 	}
+
+	return true;
+}
+
+//转化出来若为零件
+bool CPBOMUtil::PbomExchange(CString strAstXml,CString strWindchillXml,CString topNumber)
+{
+	TiXmlDocument doc;
+
+	if (!doc.LoadFile(strAstXml.GetBuffer()))
+	{
+		return false;
+	}
+	
+	auto KKMPP_EBOM=doc.FirstChildElement();
+	if (KKMPP_EBOM)
+	{
+		auto ParentNode =KKMPP_EBOM->FirstChild();
+
+		if (ParentNode)
+		{
+			auto Pos =ParentNode->FirstChild();
+
+			auto Node =Pos->NextSibling();
+
+			if (Node)
+			{
+				auto Params =Node->FirstChild("Params");
+
+				Node->RemoveChild(Params);
+				
+				TiXmlDocument xml;
+				auto isopen = xml.Parse(strWindchillXml);
+				if (!isopen)
+				{
+					return S_FALSE;
+				}
+
+				std::vector<PartInfo> partInfo;
+				TiXmlElement *root = xml.FirstChildElement();
+				if (root == NULL || root->FirstChildElement() == NULL)
+				{
+					xml.Clear();
+					return FALSE;
+				}
+
+				auto elem = root->FirstChildElement()->FirstChildElement();
+				while (elem != NULL)
+				{
+					PartInfo part(elem);
+					partInfo.push_back(part);
+					elem = elem->NextSiblingElement();
+				}
+				
+				TiXmlElement* pParams = new TiXmlElement(_T("Params"));
+				CWindChillSetting *pSetting = CWindChillSetting::GetAppSettings();
+
+				int prop_count = pSetting->m_strRelMatch.GetCount();
+				for (int i = 0; i < prop_count; i++)
+				{
+					CString strWindPropName = pSetting->m_strRelMatch.GetAt(i).m_strValue;
+					CString strAstPropName = pSetting->m_strRelMatch.GetAt(i).m_strName;
+					if (strWindPropName.IsEmpty())
+					{
+						continue;
+					}
+
+					CString strValue = partInfo[0].value[strWindPropName.GetBuffer()].c_str();
+					TiXmlElement* pParam = new TiXmlElement(_T("Param"));
+					pParam->SetAttribute(_T("name"),ConvertUTF8(strAstPropName).GetBuffer());
+					pParam->SetAttribute(_T("value"),ConvertUTF8(strValue).GetBuffer());
+					pParams->LinkEndChild(pParam);
+				}
+				Node->LinkEndChild(pParams);
+
+
+			}
+		}
+	}
+	
+	doc.SaveFile(strAstXml.GetBuffer());
 
 	return true;
 }
@@ -862,7 +970,6 @@ void CPBOMUtil::GetPosition(vector<CWindRelation> &windRelationVec,map<CString,C
 				relation.SetPosition(nodeInfos[index].GetPosition());
 				strFileName = nodeInfos[index].GetPropValue(_T("filename"));
 				strSrcname = nodeInfos[index].GetPropValue(_T("srcname"));
-
 				matchVec.push_back(relation);
 			}
 		}
@@ -870,8 +977,14 @@ void CPBOMUtil::GetPosition(vector<CWindRelation> &windRelationVec,map<CString,C
 		{
 			matchVec.push_back(*it);
 		}
-		windnodes[strNum]->m_strFileName = strFileName;
-		windnodes[strNum]->m_strSrcname = strSrcname;
+		
+		auto res= windnodes.find(strNum);
+		if(res!=windnodes.end())
+		{
+			windnodes[strNum]->m_strFileName = strFileName;
+			windnodes[strNum]->m_strSrcname = strSrcname;
+		}
+		
 	}
 	windRelationVec.clear();
 	windRelationVec = matchVec;
@@ -886,7 +999,40 @@ bool CPBOMUtil::isMatchAst(CString strParent, CString strNum, vector<CAstNodeInf
 		{
 			continue;
 		}
-		if (tmp.GetParentNumber() == strParent && tmp.GetNumber() == strNum)
+	
+		auto ParentNum =tmp.GetParentNumber();
+
+		ParentNum.Replace("J/GDJV4","J/GDJⅤ4");
+
+		/*auto chinesePos =0;
+		for(auto i =ParentNum.GetLength();i>0; i--)
+		{
+			if(ParentNum.GetAt(i) >0)
+			{
+				chinesePos =i;
+				break;
+			}
+		}
+		
+		ParentNum = ParentNum.Left(chinesePos);*/
+
+		auto Num =tmp.GetNumber();
+	
+		Num.Replace("J/GDJV4","J/GDJⅤ4");
+
+	/*	for(auto i =Num.GetLength(); i>0; i--)
+		{
+			if(Num.GetAt(i) >0)
+			{
+				chinesePos =i;
+				break;
+			}
+		}
+
+		Num = Num.Left(chinesePos+1);*/
+
+
+		if (ParentNum.Find(strParent)==0 && Num.Find(strNum) == 0)
 		{
 			tmp.SetMatched();
 			index = i;
@@ -936,9 +1082,42 @@ void CPBOMUtil::Createchild(CWindNode* pNode,TiXmlElement* ele,const vector<CWin
 
 
 
+void CPBOMUtil::LoadAttr(CString path,vector<AttrInfo> & attrinfo)
+{
+	TiXmlDocument doc;
+	if (!doc.LoadFile(path.GetBuffer(path.GetLength())))
+	{
+		return ;
+	}
+
+	
+	auto APS_Model_Attr =doc.FirstChild();
+	for (auto it =APS_Model_Attr->FirstChild();it!=NULL;it=it->NextSibling())
+	{
+		auto Ele =it->ToElement();
+
+		AttrInfo temp;
+		temp.SolidInfo["Name"] =Ele->Attribute("Name");
+		temp.SolidInfo["SrcName"] =Ele->Attribute("SrcName");
+		temp.SolidInfo["DesName"] =Ele->Attribute("DesName");
+
+		for (auto item = it->FirstChild();item!=NULL;item =item->NextSibling())
+		{
+			auto Propitem =item->ToElement();
+
+			if(CString(Propitem->Attribute("Name")).CompareNoCase("代号")==0)
+			{
+				temp.PropInfo["Name"] =Propitem->Attribute("Name");
+				temp.PropInfo["Value"] =Propitem->Attribute("Value");
+			}
+		}
+		attrinfo.push_back(temp);
+	}
+
+}
+
 CString CPBOMUtil::CreatePbomXml(const vector<CWindRelation> &windRelationVec, map<CString,CWindNode*> &windNodes,CString astxml)
 {
-	
 	map<CString, TiXmlElement*> parentElement_map;
 	parentElement_map.clear();
 
@@ -1074,7 +1253,6 @@ CString CPBOMUtil::CreatePbomXml(const vector<CWindRelation> &windRelationVec, m
 			count++;
 		}
 		*/
-
 		CString strParent = it->m_strParentNumber;
 		TiXmlElement* pParentElement = parentElement_map[strParent];
 
@@ -1088,7 +1266,6 @@ CString CPBOMUtil::CreatePbomXml(const vector<CWindRelation> &windRelationVec, m
 				parentElement_map[strParent] = pParentElement;
 			}
 		}
-
 
 		CString strNum = it->m_strNumber;
 		CWindNode* pNode = windNodes[strNum];
@@ -1170,8 +1347,8 @@ TiXmlElement* CPBOMUtil::CreateElement( CWindNode* pNode,const CPosition &pos)
 	pElement->SetAttribute(_T("name"),pNode->GetPropValue(_T("Name")));
 	pElement->SetAttribute(_T("type"),strType);
 	pElement->SetAttribute(_T("srcname"), pNode->m_strSrcname);
+	CWindChillSetting::PROCUDEID.push_back(to_string((LONGLONG)(id)).c_str());
 
-	CWindChillSetting::PROCUDEID.push_back(to_string((long long )id));
 	if (strType.CompareNoCase("prt")==0)
 	{
 		if (strFileName.IsEmpty())
@@ -1194,12 +1371,6 @@ TiXmlElement* CPBOMUtil::CreateElement( CWindNode* pNode,const CPosition &pos)
 		{
 			continue;
 		}
-		if (strWindPropName.IsEmpty())
-		{
-			continue;
-		}
-
-
 		CString strValue = pNode->GetPropValue(strWindPropName);
 		TiXmlElement* pParam = new TiXmlElement(_T("Param"));
 		pParam->SetAttribute(_T("name"),strAstPropName);
@@ -1499,4 +1670,14 @@ CPosition::CPosition()
 CPosition::~CPosition()
 {
 
+}
+
+AttrInfo & AttrInfo::operator=(const AttrInfo & val)
+{
+	if (this != &val)
+	{
+		this->SolidInfo = val.SolidInfo;
+		this->PropInfo =val.PropInfo;
+	}
+	return *this;
 }

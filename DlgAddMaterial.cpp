@@ -51,7 +51,6 @@ CDlgAddMaterial::CDlgAddMaterial(ResourceType type, UINT ID,CWnd* pParent /*=NUL
 
 CDlgAddMaterial::~CDlgAddMaterial()
 {
-	
 }
 
 void CDlgAddMaterial::DoDataExchange(CDataExchange* pDX)
@@ -184,6 +183,70 @@ void CDlgAddMaterial::OnQuery()
 		if (ResourceType_ADDMaterial == m_type)
 		{
 			operType = "1";
+			CString XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
+			doc.Parse(XmlContent.GetBuffer());
+			XmlContent.ReleaseBuffer();
+
+			TiXmlElement *root = doc.FirstChildElement();
+			if (root == NULL)
+			{
+				MessageBox("返回信息有误", APS_MSGBOX_TITIE, MB_OK);
+				doc.Clear();
+				return;
+			}
+
+			auto elem = root->FirstChildElement()->FirstChildElement();
+			int row = -1, col;
+			while (elem != NULL)
+			{
+				auto PartContent = elem->FirstChildElement();
+				++row;
+				m_Resultlist.InsertItem(row, _T(""));
+				col = -1;
+				while (PartContent != NULL)
+				{
+					auto key = PartContent->Value();
+					auto word = PartContent->GetText();
+
+					CString strValue = _T("");
+					bool bFind = KmWindChillCommon::FindPropDataInfo(pSetting->m_strAccessoryMatch, key, strValue);
+					if (!bFind)
+					{
+						PartContent = PartContent->NextSiblingElement();
+						continue;
+					}
+					else
+					{
+						col = KmWindChillCommon::FindPropDataIndex(pSetting->m_strAccessoryMatch, key);
+						m_Resultlist.SetItemText(row, col, word);
+
+						auto width =m_Resultlist.GetColumnWidth(col);
+						m_Resultlist.SetColumnWidth(col, LVSCW_AUTOSIZE);
+
+						auto width1 = m_Resultlist.GetColumnWidth(col);
+						if (width>width1)
+						{
+							m_Resultlist.SetColumnWidth(col, width);
+						}
+					}
+					PartContent = PartContent->NextSiblingElement();
+				}
+				elem = elem->NextSiblingElement();
+			}
+
+			m_Resultlist.SetRedraw(FALSE);
+			CHeaderCtrl *pheader =m_Resultlist.GetHeaderCtrl();
+			auto colcount =pheader->GetItemCount();
+			for (int i=0;i<colcount;++i)
+			{
+				m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE);
+				auto colwidth =m_Resultlist.GetColumnWidth(i);
+				m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE_USEHEADER);
+				auto headwidth =m_Resultlist.GetColumnWidth(i);
+				m_Resultlist.SetColumnWidth(i,max(colwidth,headwidth));
+			}
+			m_Resultlist.SetRedraw(TRUE);
+			doc.Clear();
 		}
 		else
 		{
@@ -193,244 +256,237 @@ void CDlgAddMaterial::OnQuery()
 				auto selitem =comBox->GetCurSel();
 				operType =CWindChillSetting::m_strResourceTypeMatch.GetAt(selitem).m_strValue;
 			}
-		}
 
-		string XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
-		doc.Parse(XmlContent.c_str());
+			CString XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
+			doc.Parse(XmlContent.GetBuffer());
+			XmlContent.ReleaseBuffer();
 
-		TiXmlElement *root = doc.FirstChildElement();
-		if (root == NULL)
-		{
-			MessageBox("返回信息有误", APS_MSGBOX_TITIE, MB_OK);
-			doc.Clear();
-			return;
-		}
-
-		auto elem = root->FirstChildElement()->FirstChildElement();
-		int row = -1, col;
-		while (elem != NULL)
-		{
-			auto PartContent = elem->FirstChildElement();
-			++row;
-			m_Resultlist.InsertItem(row, _T(""));
-			col = -1;
-			while (PartContent != NULL)
+			TiXmlElement *root = doc.FirstChildElement();
+			if (root == NULL)
 			{
-				auto key = PartContent->Value();
-				auto word = PartContent->GetText();
-
-				CString strValue = _T("");
-				bool bFind = KmWindChillCommon::FindPropDataInfo(pSetting->m_strAccessoryMatch, key, strValue);
-				if (!bFind)
-				{
-					PartContent = PartContent->NextSiblingElement();
-					continue;
-				}
-				else
-				{
-					col = KmWindChillCommon::FindPropDataIndex(pSetting->m_strAccessoryMatch, key);
-					m_Resultlist.SetItemText(row, col, word);
-
-					auto width =m_Resultlist.GetColumnWidth(col);
-					m_Resultlist.SetColumnWidth(col, LVSCW_AUTOSIZE);
-
-					auto width1 = m_Resultlist.GetColumnWidth(col);
-					if (width>width1)
-					{
-						m_Resultlist.SetColumnWidth(col, width);
-					}
-				}
-				PartContent = PartContent->NextSiblingElement();
-			}
-			elem = elem->NextSiblingElement();
-		}
-
-		m_Resultlist.SetRedraw(FALSE);
-		CHeaderCtrl *pheader =m_Resultlist.GetHeaderCtrl();
-		auto colcount =pheader->GetItemCount();
-		for (int i=0;i<colcount;++i)
-		{
-			m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE);
-			auto colwidth =m_Resultlist.GetColumnWidth(i);
-			m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE_USEHEADER);
-			auto headwidth =m_Resultlist.GetColumnWidth(i);
-			m_Resultlist.SetColumnWidth(i,max(colwidth,headwidth));
-		}
-		m_Resultlist.SetRedraw(TRUE);
-		doc.Clear();
-	}
-}
-
-void CDlgAddMaterial::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO:  在此添加控件通知处理程序代码
-	auto row = m_Resultlist.GetNextItem(-1, LVIS_SELECTED);
-	if (row != -1)
-	{
-		CString operType = "1";
-		if (ResourceType_ADDMaterial == m_type)
-		{
-			operType = "1";
-
-			CString resourceNumber = m_Resultlist.GetItemText(row, 0);
-			auto  XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
-			AddMaterialxml.Parse(XmlContent.GetBuffer());
-			CDialog::OnOK();
-		}
-		else
-		{
-			operType = "5";
-
-			CString resourceNumber = m_Resultlist.GetItemText(row, 0);
-			auto  Xmlcontent = m_WebServiceInterface.getDocInfoOfContent(operType, resourceNumber);
-
-			if (Xmlcontent.IsEmpty())
-			{
+				MessageBox("返回信息有误", APS_MSGBOX_TITIE, MB_OK);
+				doc.Clear();
 				return;
 			}
 
-			auto path = CWindChillXml::GetPath(Xmlcontent);
-			//返回压缩包名称  需要在ftp下载
-
-			//CWindChillSetting::m_strpartFirstName = path;
-
-			CString strFTPPath, strFTPName;
-			//下载文件的路径
-			strFTPPath = "/downloadContent/";
-			strFTPName = path;
-
-			TCHAR TempDir[1024];
-			GetTempPath(1024, TempDir);
-			CString sTempDir(TempDir);
-			sTempDir = sTempDir + _T("KM3DCAPP-AWORK\\");
-			CString strlocal = sTempDir + strFTPName;
-			if (!ExistDir(sTempDir))
+			auto elem = root->FirstChildElement()->FirstChildElement();
+			int row = -1, col;
+			while (elem != NULL)
 			{
-				if (!::CreateDirectory(sTempDir, NULL))
+				auto PartContent = elem->FirstChildElement();
+				++row;
+				m_Resultlist.InsertItem(row, _T(""));
+				col = -1;
+				while (PartContent != NULL)
 				{
-				}
-			}
-			if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
-			{
-				MessageBox("ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+					auto key = PartContent->Value();
+					auto word = PartContent->GetText();
 
-				return;
-			}
-
-			BOOL bSucc = m_FTPInterface.DownLoad(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
-			if (!bSucc)
-			{
-				CString strErrMsg = _T("下载文件失败！");
-				//strErrMsg.Format(_T("下载文件【%s】失败！"), strFTPName);
-				MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK);
-				return;
-			}
-
-			if (strFTPName.Find(_T(".zip")) >= 0)  //传递的压缩文件包
-			{
-				int nP = strFTPName.ReverseFind(_T('.'));
-				CString strDir = sTempDir + strFTPName.Left(nP) + "\\";  //压缩文件解压后的文件夹
-				KmZipUtil kmZipUtil;
-				if (kmZipUtil.OpenZipFile(strlocal, KmZipUtil::ZipOpenForUncompress))
-				{
-					if (!ExistDir(strDir))
+					CString strValue = _T("");
+					bool bFind = KmWindChillCommon::FindPropDataInfo(pSetting->m_strQueryMatch, key, strValue);
+					if (!bFind)
 					{
-						if (!::CreateDirectory(strDir, NULL))
-						{
-						}
-					}
-					kmZipUtil.UnZipAll(strDir);
-					kmZipUtil.CloseZipFile();
-					//DeleteFile(strlocal);
-					CFileFind find;
-
-					auto partdir = strDir+GetMainFileName(path)+_T("\\");
-					auto isFind = find.FindFile(partdir + _T("*.catpart"));
-					//int i = 0;
-					//isFind = 0;
-					if (isFind)
-					{
-						isFind = find.FindNextFile();
-						auto partpath = find.GetFilePath();
-
-						if (GetParent())
-						{
-							//获取选中行的属性  Name Number Type
-							std::vector<PropData> prop;
-							
-							PropData temp;
-							temp.m_strName = "ID";
-							temp.m_strValue= std::to_string(static_cast<long long>(m_ID)).c_str();
-						
-							prop.push_back(temp);
-
-							temp.m_strName = "Path";
-							temp.m_strValue = partpath;
-							prop.push_back(temp);
-							
-							auto comBox = (CComboBox*)GetDlgItem(IDC_ADDMATERIAL_COMBOX);
-							if (comBox)
-							{
-								
-								CString str;
-
-								comBox->GetLBText(comBox->GetCurSel(), str);
-								temp.m_strName = "CATEGORY";
-								temp.m_strValue = str;
-								prop.push_back(temp);
-
-								temp.m_strName = "类型";
-								temp.m_strValue = str;
-								prop.push_back(temp);
-							}
-							
-
-							temp.m_strName = "KEY";
-							temp.m_strValue = resourceNumber;
-							prop.push_back(temp);
-
-					
-							CWindChillSetting* pSetting = CWindChillSetting::GetAppSettings();
-							for (int i = 0; i < pSetting->m_strAccessoryMatch.GetCount(); i++)
-							{
-								CString strName = pSetting->m_strAccessoryMatch.GetAt(i).m_strName;
-								CString strValue = m_Resultlist.GetItemText(row, i);
-								if (!strName.IsEmpty())
-								{
-									temp.m_strName = strName;
-									temp.m_strValue = strValue;
-
-									prop.push_back(temp);
-								}
-							}
-
-							::SendMessage(GetParent()->GetSafeHwnd(), MSG_IMPORT_EQUIES, NULL, LPARAM(&prop));
-							CDialog::OnOK();
-							return;
-						}
+						PartContent = PartContent->NextSiblingElement();
+						continue;
 					}
 					else
 					{
-						MessageBox("此工艺装备无实体模型", APS_MSGBOX_TITIE, MB_OK);
-						//获取选中行的属性  Name Number Type
+						col = KmWindChillCommon::FindPropDataIndex(pSetting->m_strQueryMatch, key);
+						m_Resultlist.SetItemText(row, col, word);
+
+						auto width =m_Resultlist.GetColumnWidth(col);
+						m_Resultlist.SetColumnWidth(col, LVSCW_AUTOSIZE);
+
+						auto width1 = m_Resultlist.GetColumnWidth(col);
+						if (width>width1)
+						{
+							m_Resultlist.SetColumnWidth(col, width);
+						}
+					}
+					PartContent = PartContent->NextSiblingElement();
+				}
+				elem = elem->NextSiblingElement();
+			}
+
+			m_Resultlist.SetRedraw(FALSE);
+			CHeaderCtrl *pheader =m_Resultlist.GetHeaderCtrl();
+			auto colcount =pheader->GetItemCount();
+			for (int i=0;i<colcount;++i)
+			{
+				m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE);
+				auto colwidth =m_Resultlist.GetColumnWidth(i);
+				m_Resultlist.SetColumnWidth(i,LVSCW_AUTOSIZE_USEHEADER);
+				auto headwidth =m_Resultlist.GetColumnWidth(i);
+				m_Resultlist.SetColumnWidth(i,max(colwidth,headwidth));
+			}
+			m_Resultlist.SetRedraw(TRUE);
+			doc.Clear();
+
+		}
+
+		
+	}
+}
+
+
+void CDlgAddMaterial::ImportEquies(int row)
+{
+	CString operType  = "5";
+
+	CString resourceNumber = m_Resultlist.GetItemText(row, 0);
+	auto  Xmlcontent = m_WebServiceInterface.getDocInfoOfContent(operType, resourceNumber);
+
+	if (Xmlcontent.IsEmpty())
+	{
+		return;
+	}
+
+	auto path = CWindChillXml::GetPath(Xmlcontent);
+	//返回压缩包名称  需要在ftp下载
+
+	//CWindChillSetting::m_strpartFirstName = path;
+
+	if (path.IsEmpty())
+	{
+		MessageBox("此工艺装备无实体模型", APS_MSGBOX_TITIE, MB_OK);
+		//获取选中行的属性  Name Number Type
+		//获取选中行的属性  Name Number Type
+		std::vector<PropData> prop;
+
+		PropData temp;
+		temp.m_strName = "ID";
+		temp.m_strValue = std::to_string(static_cast<long long>(m_ID)).c_str();
+
+		prop.push_back(temp);
+
+		temp.m_strName = "Path";
+		temp.m_strValue = "";
+		prop.push_back(temp);
+
+		auto comBox = (CComboBox*)GetDlgItem(IDC_ADDMATERIAL_COMBOX);
+		if (comBox)
+		{
+			comBox->ShowWindow(SW_SHOW);
+			CString str;
+
+			comBox->GetLBText(comBox->GetCurSel(), str);
+			temp.m_strName = "CATEGORY";
+			temp.m_strValue = str;
+			prop.push_back(temp);
+
+			temp.m_strName = "类型";
+			temp.m_strValue = str;
+			prop.push_back(temp);
+		}
+
+
+		temp.m_strName = "KEY";
+		temp.m_strValue = resourceNumber;
+		prop.push_back(temp);
+
+
+
+		CWindChillSetting* pSetting = CWindChillSetting::GetAppSettings();
+		for (int i = 0; i < pSetting->m_strQueryMatch.GetCount(); i++)
+		{
+			CString strName = pSetting->m_strQueryMatch.GetAt(i).m_strName;
+			CString strValue = m_Resultlist.GetItemText(row, i);
+			if (!strName.IsEmpty())
+			{
+				if (strName.CompareNoCase(_T("类型"))==0)
+				{
+					continue;
+				}
+				temp.m_strName = strName;
+				temp.m_strValue = strValue;
+
+				prop.push_back(temp);
+			}
+		}
+
+		::SendMessage(GetParent()->GetSafeHwnd(), MSG_IMPORT_EQUIES, NULL, LPARAM(&prop));
+		CDialog::OnOK();
+		return;
+	}
+	else
+	{
+		CString strFTPPath, strFTPName;
+		//下载文件的路径
+		strFTPPath = "/downloadContent/";
+		strFTPName = path;
+
+		TCHAR TempDir[1024];
+		GetTempPath(1024, TempDir);
+		CString sTempDir(TempDir);
+		sTempDir = sTempDir + _T("KM3DCAPP-AWORK\\");
+		CString strlocal = sTempDir + strFTPName;
+		if (!ExistDir(sTempDir))
+		{
+			if (!::CreateDirectory(sTempDir, NULL))
+			{
+			}
+		}
+		if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
+		{
+			MessageBox("ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+
+			return;
+		}
+
+		BOOL bSucc = m_FTPInterface.DownLoad(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+		if (!bSucc)
+		{
+			CString strErrMsg = _T("下载文件失败！");
+			//strErrMsg.Format(_T("下载文件【%s】失败！"), strFTPName);
+			MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK);
+			return;
+		}
+
+		if (strFTPName.Find(_T(".zip")) >= 0)  //传递的压缩文件包
+		{
+			int nP = strFTPName.ReverseFind(_T('.'));
+			CString strDir = sTempDir + strFTPName.Left(nP) + "\\";  //压缩文件解压后的文件夹
+			KmZipUtil kmZipUtil;
+			if (kmZipUtil.OpenZipFile(strlocal, KmZipUtil::ZipOpenForUncompress))
+			{
+				if (!ExistDir(strDir))
+				{
+					if (!::CreateDirectory(strDir, NULL))
+					{
+					}
+				}
+				kmZipUtil.UnZipAll(strDir);
+				kmZipUtil.CloseZipFile();
+
+				CFileFind find;
+
+				auto partdir = strDir+GetMainFileName(path)+_T("\\");
+				auto isFind = find.FindFile(partdir + _T("*.catpart"));
+
+				if (isFind)
+				{
+					isFind = find.FindNextFile();
+					auto partpath = find.GetFilePath();
+
+					if (GetParent())
+					{
 						//获取选中行的属性  Name Number Type
 						std::vector<PropData> prop;
 
 						PropData temp;
 						temp.m_strName = "ID";
-						temp.m_strValue = std::to_string(static_cast<long long>(m_ID)).c_str();
+						temp.m_strValue= std::to_string(static_cast<long long>(m_ID)).c_str();
 
 						prop.push_back(temp);
 
 						temp.m_strName = "Path";
-						temp.m_strValue = "";
+						temp.m_strValue = partpath;
 						prop.push_back(temp);
 
 						auto comBox = (CComboBox*)GetDlgItem(IDC_ADDMATERIAL_COMBOX);
 						if (comBox)
 						{
-							comBox->ShowWindow(SW_SHOW);
+
 							CString str;
 
 							comBox->GetLBText(comBox->GetCurSel(), str);
@@ -448,12 +504,11 @@ void CDlgAddMaterial::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 						temp.m_strValue = resourceNumber;
 						prop.push_back(temp);
 
-					
 
 						CWindChillSetting* pSetting = CWindChillSetting::GetAppSettings();
-						for (int i = 0; i < pSetting->m_strAccessoryMatch.GetCount(); i++)
+						for (int i = 0; i < pSetting->m_strQueryMatch.GetCount(); i++)
 						{
-							CString strName = pSetting->m_strAccessoryMatch.GetAt(i).m_strName;
+							CString strName = pSetting->m_strQueryMatch.GetAt(i).m_strName;
 							CString strValue = m_Resultlist.GetItemText(row, i);
 							if (!strName.IsEmpty())
 							{
@@ -469,14 +524,39 @@ void CDlgAddMaterial::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 						return;
 					}
 				}
-				else
-				{
-					MessageBox("解压失败！", APS_MSGBOX_TITIE, MB_OK);
-					return;
-				}
 			}
+
+		}
+		else
+		{
+			MessageBox("解压失败！", APS_MSGBOX_TITIE, MB_OK);
+			return;
 		}
 	}
+}
+
+void CDlgAddMaterial::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO:  在此添加控件通知处理程序代码
+	auto row = m_Resultlist.GetNextItem(-1, LVIS_SELECTED);
+	if (row != -1)
+	{
+		
+		if (ResourceType_ADDMaterial == m_type)
+		{
+			CString operType = "1";
+
+			CString resourceNumber = m_Resultlist.GetItemText(row, 0);
+			auto  XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
+			AddMaterialxml.Parse(XmlContent.GetBuffer());
+			CDialog::OnOK();
+		}
+		else
+		{
+			ImportEquies(row);
+		}
+	} 
 	*pResult = 0;
 }
 
@@ -505,10 +585,19 @@ void CDlgAddMaterial::OnBnClickedAddmaterialOk()
 	auto row = m_Resultlist.GetNextItem(-1, LVIS_SELECTED);
 	if (row != -1)
 	{
-		CString operType = "1";
-		CString resourceNumber = m_Resultlist.GetItemText(row, 0);
-		auto  XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
-		AddMaterialxml.Parse(XmlContent.GetBuffer());
+		if (ResourceType_ADDMaterial == m_type)
+		{
+			CString operType = "1";
+			CString resourceNumber = m_Resultlist.GetItemText(row, 0);
+			auto  XmlContent = m_WebServiceInterface.SearchResource(operType, resourceNumber);
+			AddMaterialxml.Parse(XmlContent.GetBuffer());
+			
+		}
+		else
+		{
+			ImportEquies(row);
+		}
+
 		CDialog::OnOK();
 	}
 }

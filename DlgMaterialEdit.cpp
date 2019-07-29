@@ -113,9 +113,12 @@ BEGIN_MESSAGE_MAP(CDlgMaterialEdit, CDialog)
 	ON_BN_CLICKED(IDC_WINDCHILL_SAVE, SaveDlg)
 	ON_BN_CLICKED(IDC_WINDCHILL_IMPORT, Import)
 	ON_BN_CLICKED(IDC_WINDCHILL_UPLOAD, Upload)
+	
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	ON_CBN_KILLFOCUS(IDC_COMBO1, &CDlgMaterialEdit::OnCbnKillfocusCombo1)
+	ON_NOTIFY(NM_RCLICK, IDC_WINDCHILL_PARTLIST, &CDlgMaterialEdit::OnNMRClickWindchillPartlist)
+	ON_COMMAND(ID_DELETE, &CDlgMaterialEdit::DeleteMatertion)
 END_MESSAGE_MAP()
 
 
@@ -348,6 +351,8 @@ void CDlgMaterialEdit::SelectItem(CString item)
 	wait.Restore();
 	//auto t_2 = GetTickCount();
 	//AfxMessageBox(to_string(t_2 - t_1).c_str());
+
+	
 }
 
 void  CDlgMaterialEdit::SelectPartition()
@@ -491,6 +496,8 @@ void  CDlgMaterialEdit::SelectPartition()
 	}
 	wait.Restore();
 	auto t_22 = GetTickCount();
+
+
 }
 
 //双击list contorl可编辑
@@ -1345,12 +1352,20 @@ void CDlgMaterialEdit::SaveDlg()
 		}
 		char *Path  =m_path.GetBuffer(m_path.GetLength());
 		
+		//auto Path =GetFilePath(m_path);
+		//auto changepath =changePartName(pBomNumber);
+
+		//auto SavePath =Path+changepath+".xml";
 		m_path.ReleaseBuffer(m_path.GetLength());
 		
 		bool flag=saveXML(Path);
 		if (flag)
 		{
 			MessageBox("保存成功", APS_MSGBOX_TITIE, MB_OK);
+		}
+		else
+		{
+			MessageBox("保存失败", APS_MSGBOX_TITIE, MB_OK);
 		}
 	} 
 }
@@ -1856,7 +1871,7 @@ void CDlgMaterialEdit::OnTvnSelchangedWindchillMaterualtype(NMHDR *pNMHDR, LRESU
 	HTREEITEM hItem;
 	hItem = m_materialtypeTree.GetSelectedItem();
 	auto text = m_materialtypeTree.GetItemText(hItem);
-	
+	m_materialtypeTree.Expand(hItem,TVE_EXPAND);
 	if (text == "分类")
 	{
 		if (partInfo.size() > 0)
@@ -1895,6 +1910,8 @@ void CDlgMaterialEdit::OnSizing(UINT fwSide, LPRECT pRect)
 	// TODO:  在此处添加消息处理程序代码
 	EASYSIZE_MINSIZE(600, 370, fwSide, pRect);
 }
+
+
 
 bool CDlgMaterialEdit::saveXML(CString path)
 {
@@ -2003,4 +2020,61 @@ bool CDlgMaterialEdit::saveXML(CString path)
 	doc.Clear(); 
 
 	return flag;
+}
+
+
+void CDlgMaterialEdit::OnNMRClickWindchillPartlist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+
+	auto selectHitem =m_materialtypeTree.GetSelectedItem();
+
+	NM_LISTVIEW *pNMListView = (NM_LISTVIEW *)pNMHDR;
+	CRect rc;
+	CString strtemp;
+	m_row = pNMListView->iItem;
+	m_col = pNMListView->iSubItem;
+	
+	//双击空白行，新添加一行
+	auto hitem =m_materialtypeTree.GetSelectedItem();
+	if ( selectHitem != NULL &&m_row!=-1)
+	{
+		auto Text =m_materialtypeTree.GetItemText(selectHitem);
+		if(Text.CompareNoCase("辅材")==0)
+		{
+			CMenu Menu;
+			Menu.LoadMenu(IDR_DELETE);
+			auto pm =Menu.GetSubMenu(0);
+			CPoint pot;
+			GetCursorPos(&pot);
+			pm->TrackPopupMenu(TPM_LEFTALIGN,pot.x,pot.y,this);
+		}
+	}
+	
+	*pResult = 0;
+}
+
+
+void CDlgMaterialEdit::DeleteMatertion()
+{
+	// TODO: 在此添加命令处理程序代码
+	
+	auto text= m_Partlist.GetItemText(m_row,1);
+
+	for (auto it = partInfo.begin();it!=partInfo.end();)
+	{
+		auto tempstr =it->value["Number"];
+		if(text.CompareNoCase(tempstr.c_str())==0)
+		{
+			it =partInfo.erase(it);
+		}
+		if (it!=partInfo.end())
+		{
+			++it;
+		}
+	}
+
+
+	SelectItem("辅材");
 }

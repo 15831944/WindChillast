@@ -85,13 +85,13 @@ STDMETHODIMP CwindchillObject::raw_GetDownFilePath(long* strkey, BSTR* bstrFile)
 
 		auto path = CWindChillXml::GetPath(str);
 
-		path = "/notconvert";
-		CString strFTPPath="notconvert", strFTPName = "1_gleich_winkel.prt", strModelName = "";
-
+		//path = "/notconvert";
+		//CString strFTPPath="notconvert", strFTPName = "1_gleich_winkel.prt", strModelName = "";
+		CString strFTPPath, strFTPName , strModelName ;
 		//获取xml读取的文件，引入产品；打开模型文件
 		//ftp下载. 
 
-		strFTPPath = path;
+		//strFTPPath = path;
 
 		if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 		{
@@ -159,7 +159,12 @@ STDMETHODIMP CwindchillObject::raw_AddOrUpdateSolid(UINT ID, BSTR bstrFile)
 
 				CAPSProp Baseprop(strName, "", strName, 1, 1);
 
-				Solid->UpdateProp(Baseprop.GetName(), CString(""));
+				CAPSProp prop;
+				Solid->SeekObjProp(strName,prop);
+				Solid->SeekObjPropByDisName(strName,prop);
+				Solid->SeekObjProp2(strName,prop);
+				auto str =prop.ConvertTo();
+				Solid->UpdateProp(Baseprop.GetName(), prop.ConvertTo());
 				Solid->CSolid::ModifyPropStateByDisName(Baseprop.GetName(), 1, 1);
 			}
 
@@ -169,6 +174,7 @@ STDMETHODIMP CwindchillObject::raw_AddOrUpdateSolid(UINT ID, BSTR bstrFile)
 		}
 	}
 	CWindChillSetting::GYJID.push_back(to_string((long long)(ID)));
+	UserPropIsEdit();
 	return S_OK;
 }
 
@@ -1357,7 +1363,6 @@ void CwindchillObject::AttachAsmObjAttr(MSXML2::IXMLDOMNodePtr pProcedure, CStri
 		if (TraverseNodeParams(pProcedure, pNode, strID))
 			break;
 	}
-
 }
 
 BOOL CwindchillObject::TraverseNodeParams(MSXML2::IXMLDOMNodePtr pProcedure, MSXML2::IXMLDOMNodePtr pNode, CString strID)
@@ -1366,6 +1371,7 @@ BOOL CwindchillObject::TraverseNodeParams(MSXML2::IXMLDOMNodePtr pProcedure, MSX
 	CString strType = pItem->getAttribute(_T("type"));
 	CString strInsID = pItem->getAttribute(_T("instanceid"));
 	CString strName = pItem->getAttribute(_T("name"));
+
 	MSXML2::IXMLDOMNodeListPtr pParamList = pNode->GetchildNodes();
 	if (strInsID.CompareNoCase(strID) == 0)
 	{
@@ -1700,7 +1706,7 @@ void CwindchillObject::UserPropIsEdit()
 		doc = m_pApplication->GetCurrentDocment();
 		//end add
 	}
-	
+
 	CAPSModel *pModel = (CAPSModel*)doc->GetAPSModel();
 	
 	auto product =pModel->GetProduct();
@@ -1713,11 +1719,27 @@ void CwindchillObject::UserPropIsEdit()
 		auto Process = pModel->GetProcess();
 		CAsmInst *pAsmRoot = Process->GetAsmInst();
 
+		
 		if (pAsmRoot != NULL)
 		{
-			pAsmRoot->CAsmInst::ModifyPropStateByDisName(strName, bShow, bEdit);
+			bool flag =false;;
+			/*for (int i = 0; i < CWindChillSetting::m_strRelMatch.GetSize(); ++i)
+			{
+				CString strName1 = CWindChillSetting::m_strRelMatch.GetAt(i).m_strName;
+				if(strName1 == strName)
+				{
+					flag = true;
+					break;
+				}
+			}
+
+			if (flag)
+				pAsmRoot->CAsmInst::ModifyPropStateByDisName(strName, 1, 1);
+			else*/
+				pAsmRoot->CAsmInst::ModifyPropStateByDisName(strName, bShow,bEdit );
 		}
 	}
+	
 
 	/*
 	for (auto it = CWindChillSetting::PROCUDEID.begin(); it != CWindChillSetting::PROCUDEID.end(); ++it)
@@ -1742,7 +1764,7 @@ void CwindchillObject::UserPropIsEdit()
 			}
 		}
 	}
-
+	
 	*/
 	for (auto it =CWindChillSetting::GYJID.begin();it!=CWindChillSetting::GYJID.end();++it)
 	{
@@ -1757,7 +1779,15 @@ void CwindchillObject::UserPropIsEdit()
 
 				CAPSProp Baseprop(strName, "", "", 1, 1);
 
-				Solid->UpdateProp(Baseprop.GetName(), CString(""));
+
+				CAPSProp prop;
+				Solid->SeekObjProp(strName,prop);
+				Solid->SeekObjPropByDisName(strName,prop);
+				Solid->SeekObjProp2(strName,prop);
+				auto str =prop.ConvertTo();
+
+
+				Solid->UpdateProp(Baseprop.GetName(), str);
 				Solid->CSolid::ModifyPropStateByDisName(Baseprop.GetName(), 1, 1);
 
 
@@ -1766,15 +1796,15 @@ void CwindchillObject::UserPropIsEdit()
 					CString strName = CWindChillSetting::m_strRelMatch.GetAt(i).m_strName;
 
 					bool bShow = 1;
-					bool bEdit = 1;
+					bool  bEdit= 1;
 					//从windhcill传过来的工艺件属性 的 编号 不能修改
 					if (strName.CompareNoCase("编号")==0)
 					{
-						Solid->CSolid::ModifyPropStateByDisName(strName, 1,0 );
+						Solid->CSolid::ModifyPropStateByDisName(strName, bShow,bEdit );
 					}
 					else
 					{
-						Solid->CSolid::ModifyPropStateByDisName(strName, 1, 1);
+						Solid->CSolid::ModifyPropStateByDisName(strName, bShow, bEdit);
 					}
 				}
 			}
@@ -1812,7 +1842,10 @@ BOOL CwindchillObject::UpdatePart()
 		{
 			CString Type = "6";
 
-			auto Name = Solid->GetShowName();
+			CAPSProp prop;
+
+			Solid->SeekObjPropByDisName("*编号",prop);
+			auto Name =prop.ConvertTo();
 
 			auto  Xmlcontent = m_WebserverInterface.getDocInfoOfContent(Type, Name);
 
@@ -1914,7 +1947,7 @@ BOOL CwindchillObject::UpdatePart()
 					}
 
 					CString ProductPath = parttop->value["epmfilename"].c_str();
-					ProductPath = "1.catpart";
+					//ProductPath = "1.catpart";
 					auto partdir = strDir + GetMainFileName(path) + _T("\\");
 					auto isFind = find.FindFile(partdir + ProductPath);
 					if (isFind)
@@ -1935,10 +1968,22 @@ BOOL CwindchillObject::UpdatePart()
 							if (CWindChillSetting::m_iConvertMode != 1)//exchange 
 							{
 								//把属性写入xml中
-								CPBOMUtil util;
 
-								util.CreatePbomExchange(strxml, testcontent, Name);
-								documentAnsiToutf8(strxml);
+								auto LowPath =ProductPath.MakeLower();
+
+	
+								if (LowPath.Find("catpart")!=-1)  //如果为零件
+								{
+									CPBOMUtil util;
+									util.PbomExchange(strxml,testcontent,Name);
+									//documentAnsiToutf8(strxml);
+								}
+								else
+								{
+									CPBOMUtil util;
+									util.CreatePbomExchange(strxml, testcontent, Name);
+									documentAnsiToutf8(strxml);
+								}
 							}
 							else
 							{
@@ -1953,6 +1998,52 @@ BOOL CwindchillObject::UpdatePart()
 							value.Add(to_string(static_cast<long long>(ID)).c_str());
 							value.Add(strxml);
 							::SendMessage(m_hwnd, MSG_UPDATE_PART, NULL, LPARAM(&value));
+							
+							
+							{
+								IAPSDocumentPtr doc = m_pApplication->GetCurrentDocment();
+
+								if (!doc)
+								{
+									//begin add by xjt in 2019.2.19 for 70785
+									auto m_hwnd = AfxGetMainWnd()->m_hWnd;
+									::SendMessage(m_hwnd, MSG_FILE_NEW, NULL, LPARAM(""));
+									doc = m_pApplication->GetCurrentDocment();
+									//end add
+								}
+
+								CAPSModel *pModel = (CAPSModel*)doc->GetAPSModel();
+
+								auto product =pModel->GetProduct();
+
+								if(product)
+								{
+									auto Solid =product->LookupSolid(ID);
+
+									if (Solid)
+									{
+										for (int i = 0; i < CWindChillSetting::m_strRelMatch.GetSize(); ++i)
+										{
+											CString strName = CWindChillSetting::m_strRelMatch.GetAt(i).m_strName;
+
+											bool bShow = 1;
+											bool  bEdit= 1;
+											//从windhcill传过来的工艺件属性 的 编号 不能修改
+											if (strName.CompareNoCase("编号")==0)
+											{
+												Solid->CSolid::ModifyPropStateByDisName(strName, bShow,bEdit );
+											}
+											else
+											{
+												Solid->CSolid::ModifyPropStateByDisName(strName, bShow, bEdit);
+											}
+										}
+									}
+
+								}
+							}
+							
+							
 						}
 					}
 				}
@@ -1964,7 +2055,6 @@ BOOL CwindchillObject::UpdatePart()
 			}
 		}
 	}
-
 	return TRUE;
 }
 //end add
@@ -2114,30 +2204,12 @@ LAST:
 }
 
 
-void test()
-{
-	CFTPInterface m_FTPInterface;
-	if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
-	{
-		MessageBox(NULL, "ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
-		return;
-	}
 
-
-auto	bSucc = m_FTPInterface.UpLoad("C:\\Users\\Administrator\\Desktop\\11111\\Product1.CATProduct", CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(),"/EPMDocumentInfo", "Product1.CATProduct");
-	if (!bSucc)
-	{
-		CString strErrMsg = _T("上传文件失败！");
-
-		return ;
-	}
-}
 
 STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 {
 	IAPSDocumentPtr doc = m_pApplication->GetCurrentDocment();
 
-	//test();
 
 	if (!doc)
 	{
@@ -2164,10 +2236,7 @@ STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 			CDlgPBOMEdit dlg(pModel, QueryType_PBOM, m_pApplication);
 			dlg.SetCaption("PBOM编辑查询");
 			dlg.DoModal();
-
 			UserPropIsEdit();
-
-
 		}
 		else if (nID == m_nPBOMCmd)
 		{
@@ -2298,10 +2367,9 @@ STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 		else if (nID == m_UpdatePartCmd)
 		{
 			UpdatePart();
-
-			UserPropIsEdit();
+			//UserPropIsEdit();
 		}
-
+		
 		return S_OK;
 }
 

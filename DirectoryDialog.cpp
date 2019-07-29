@@ -18,10 +18,10 @@ CDirectoryDialog::CDirectoryDialog(const CString& strIniKeyName, HWND hParaent)
  
 CDirectoryDialog::~CDirectoryDialog() 
 { 
-	
+ 
 } 
  
-int  CDirectoryDialog::BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData) 
+int CALLBACK CDirectoryDialog::BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData) 
 { 
 	switch(uMsg) 
 	{		 

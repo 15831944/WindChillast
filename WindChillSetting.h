@@ -94,7 +94,6 @@ public:
 	static bool  LoadResourceTyoeMatch();
 	static bool  LoadReadModelConfig();
 
-
 	static bool ReadProAry(CString strFilter,CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData>& propArys);
 
 	static void SetLoginInfo(CString strUser, CString strPass);

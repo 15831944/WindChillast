@@ -6,6 +6,11 @@
 using namespace std;
 
 
+PartInfo::~PartInfo()
+{
+
+}
+
 //vector<string> regsplit(string str, string pattern)
 //{
 //	std::regex re(pattern.c_str());
