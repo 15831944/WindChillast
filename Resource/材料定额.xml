@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="GB2312"?>
+<ExcelOutput>
+	<SheetGroup SheetFirst="封面" Foreach="Proc">
+		<SheetFirst>
+			<Info>
+				<Item Range="K20:N22" Format="Text">产品型号</Item>
+				<Item Range="K23:N25" Format="Text">产品名称</Item>
+				<Item Range="L28:M29" Format="Text">版次</Item>
+				<Item Range="C32:S32" Format="Text">共页</Item> 
+				<Item Range="C42:S43" Format="Text">时间</Item> 
+			</Info>
+		</SheetFirst>             
+	</SheetGroup>
+  <SheetGroup SheetFirst="第1页" Foreach="Step">
+		<SheetFirst>
+			<Info>
+				<Item Range="AF3:AH3" Format="Text">产品型号</Item>
+				<Item Range="Y3:AE3" Format="Text">产品名称</Item>
+				<Item Range="W2:X2" Format="TotalPages">第 页</Item>
+			</Info>
+			<Grid Foreach="BOM" Range="B7:AH7" Interval="0">
+				<Item Range="B7:B7" Format="TE">序号</Item>
+				<Item Range="C7:C7" Format="Text">零件号</Item>
+				<Item Range="D7:E7" Format="Text">零件名称 </Item>
+				<Item Range="F7:F7" Format="Text">下料单位</Item>
+				<Item Range="G7:G7" Format="Text">使用单位</Item>
+				<Item Range="H7:H7" Format="Text">材料名称</Item>
+				<Item Range="I7:I7" Format="Text">牌号</Item>
+				<Item Range="J7:J7" Format="Text">供应状态</Item>
+				<Item Range="K7:K7" Format="Text">品种技术条件</Item>
+				<Item Range="L7:M7" Format="Text">下料尺寸</Item>
+				<Item Range="N7:O7" Format="Text">零件数</Item>
+				<Item Range="P7:Q7" Format="Text">备注</Item>
+				<Item Range="R7:T7" Format="Text">零件定额尺寸</Item>
+				<Item Range="U7:W7" Format="Text">单套数量</Item>
+				<Item Range="X7:Z7" Format="Text">单套备件</Item>
+				<Item Range="AA7:AA7" Format="Text">计算单位</Item>
+				<Item Range="AB7:AC7" Format="Text">单件重量</Item>
+				<Item Range="AD7:AD7" Format="Text">全套重量</Item>
+				<Item Range="AE7:AF7" Format="Text">零件净重</Item>
+				<Item Range="AG7:AG7" Format="Text">备注</Item>
+				<Item Range="AH7:AH7" Format="Text">材料利用率</Item>   
+			</Grid>
+		</SheetFirst>                
+  </SheetGroup>
+</ExcelOutput>

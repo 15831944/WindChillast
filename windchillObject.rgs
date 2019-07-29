@@ -1,0 +1,16 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {8D11522B-5091-48DC-B796-6218A159CFAE} = s 'winchillObject Class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{F8D4D522-816E-4098-B34F-AEB6EC8CF45D}'
+			Version = s '1.0'
+		}
+	}
+}

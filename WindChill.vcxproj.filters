@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgLogIn.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgPBOMEdit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tinystr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlerror.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlparser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServiceInterface.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Partinfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMaterialEdit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgAddMaterial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMaterialQuery.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgSave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="soapC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="soapClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdsoap2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Basex64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DBOperation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindChill.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindChillObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindChillSetting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindChillXml.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProcEdit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgSavePdf.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CAcroAXDocShim.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProcRule.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MyCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBomCreate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBOMUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgPDFConfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgPDFExport.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgLogIn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgPBOMEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tinystr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServiceInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMaterialEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Partinfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CApplication.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CRange.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CWorkbook.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CWorksheet.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CWorksheets.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CWorkbooks.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgAddMaterial.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMaterialQuery.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryDialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgSave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="soapH.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="soapStub.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdsoap2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Basex64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DBOperation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindChill.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindChillObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindChillSetting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindChillXml.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgProcEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgSavePdf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CAcroAXDocShim.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgProcRule.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBomCreate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBOMUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgPDFConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgPDFExport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Version.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="WindChill.rgs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="WindChillObject.rgs">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WindChill.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="WindChill.idl">
+      <Filter>源文件</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\kmapstool2.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

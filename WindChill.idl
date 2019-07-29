@@ -1,0 +1,34 @@
+// WindChill.idl : WindChill 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(WindChill.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(1A175FD2-70AA-42C8-9A5B-1BB811850361),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IWindChillObject : IDispatch{
+};
+[
+	uuid(F8D4D522-816E-4098-B34F-AEB6EC8CF45D),
+	version(1.0)	
+]
+library WindChillLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(8D11522B-5091-48DC-B796-6218A159CFAE)		
+	]
+	coclass WindChillObject
+	{
+		[default] interface IWindChillObject;
+	};
+};
+

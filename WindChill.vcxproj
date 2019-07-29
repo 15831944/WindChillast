@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DbgRelease|Win32">
+      <Configuration>DbgRelease</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DbgRelease|x64">
+      <Configuration>DbgRelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{ED9C3134-51FC-43C1-8009-58F9F4064667}</ProjectGuid>
+    <RootNamespace>WindChill</RootNamespace>
+    <Keyword>MFCDLLProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>WindChill</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+    <OutDir>..\..\Project\VC2013\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+    <OutDir>..\..\Project\VC2013\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+    <OutDir>..\..\Project\VC2013\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\Project\VC2013\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+    <OutDir>D:\KMSOFT\KMAPS</OutDir>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\Project\VC2013\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>true</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)std_$(TargetName)_x86$(TargetExt)</OutputFile>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurld.lib</AdditionalDependencies>
+      <MapFileName />
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>true</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)std_$(TargetName)_x64$(TargetExt)</OutputFile>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurld.lib</AdditionalDependencies>
+      <MapFileName />
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>false</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <OutputFile>$(OutDir)std_$(TargetName)_x86$(TargetExt)</OutputFile>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>true</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <MapFileName />
+      <OutputFile>$(OutDir)std_$(TargetName)_x86$(TargetExt)</OutputFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>false</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <OutputFile>$(OutDir)std_$(TargetName)_x64$(TargetExt)</OutputFile>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <RegisterOutput>true</RegisterOutput>
+      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <OutputFile>$(OutDir)std_$(TargetName)_x64$(TargetExt)</OutputFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OutputDirectory>%(RootDir)%(Directory)</OutputDirectory>
+      <TypeLibraryName>%(RootDir)%(Directory)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0804</Culture>
+      <PreprocessorDefinitions>_WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Basex64.cpp" />
+    <ClCompile Include="CAcroAXDocShim.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="DBOperation.cpp" />
+    <ClCompile Include="DirectoryDialog.cpp" />
+    <ClCompile Include="DlgAddMaterial.cpp" />
+    <ClCompile Include="DlgLogIn.cpp" />
+    <ClCompile Include="DlgMaterialEdit.cpp" />
+    <ClCompile Include="DlgMaterialQuery.cpp" />
+    <ClCompile Include="DlgPBOMEdit.cpp" />
+    <ClCompile Include="DlgPDFConfig.cpp" />
+    <ClCompile Include="DlgPDFExport.cpp" />
+    <ClCompile Include="DlgProcEdit.cpp" />
+    <ClCompile Include="DlgProcRule.cpp" />
+    <ClCompile Include="DlgSave.cpp" />
+    <ClCompile Include="DlgSavePdf.cpp" />
+    <ClCompile Include="MyCtrl.cpp" />
+    <ClCompile Include="Partinfo.cpp" />
+    <ClCompile Include="PBomCreate.cpp" />
+    <ClCompile Include="PBOMUtil.cpp" />
+    <ClCompile Include="soapC.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="soapClient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="stdsoap2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="tinystr.cpp" />
+    <ClCompile Include="tinyxml.cpp" />
+    <ClCompile Include="tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxmlparser.cpp" />
+    <ClCompile Include="WebServiceInterface.cpp" />
+    <ClCompile Include="WindChill.cpp" />
+    <ClCompile Include="WindChillObject.cpp" />
+    <ClCompile Include="WindChillSetting.cpp" />
+    <ClCompile Include="WindChillXml.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Basex64.h" />
+    <ClInclude Include="CAcroAXDocShim.h" />
+    <ClInclude Include="CApplication.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="CRange.h" />
+    <ClInclude Include="CWorkbook.h" />
+    <ClInclude Include="CWorkbooks.h" />
+    <ClInclude Include="CWorksheet.h" />
+    <ClInclude Include="CWorksheets.h" />
+    <ClInclude Include="DBOperation.h" />
+    <ClInclude Include="DirectoryDialog.h" />
+    <ClInclude Include="DlgAddMaterial.h" />
+    <ClInclude Include="DlgLogIn.h" />
+    <ClInclude Include="DlgMaterialEdit.h" />
+    <ClInclude Include="DlgMaterialQuery.h" />
+    <ClInclude Include="DlgPBOMEdit.h" />
+    <ClInclude Include="DlgPDFConfig.h" />
+    <ClInclude Include="DlgPDFExport.h" />
+    <ClInclude Include="DlgProcEdit.h" />
+    <ClInclude Include="DlgProcRule.h" />
+    <ClInclude Include="DlgSave.h" />
+    <ClInclude Include="DlgSavePdf.h" />
+    <ClInclude Include="MyCtrl.h" />
+    <ClInclude Include="Partinfo.h" />
+    <ClInclude Include="PBomCreate.h" />
+    <ClInclude Include="PBOMUtil.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="soapH.h" />
+    <ClInclude Include="soapStub.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stdsoap2.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="tinystr.h" />
+    <ClInclude Include="tinyxml.h" />
+    <ClInclude Include="WebServiceInterface.h" />
+    <ClInclude Include="WindChill.h" />
+    <ClInclude Include="WindChillObject.h" />
+    <ClInclude Include="WindChillSetting.h" />
+    <ClInclude Include="WindChillXml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WindChill.rgs" />
+    <None Include="WindChillObject.rgs" />
+    <None Include="res\Version.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WindChill.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="WindChill.idl">
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MkTypLibCompatible>
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MkTypLibCompatible>
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Win32</TargetEnvironment>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_i.h</HeaderFileName>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)_i.h</HeaderFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_i.c</InterfaceIdentifierFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)_i.c</InterfaceIdentifierFileName>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateStublessProxies>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateStublessProxies>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MkTypLibCompatible>
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">false</MkTypLibCompatible>
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MkTypLibCompatible>
+      <MkTypLibCompatible Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">false</MkTypLibCompatible>
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Win32</TargetEnvironment>
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">Win32</TargetEnvironment>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WindChill_i.h</HeaderFileName>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">WindChill_i.h</HeaderFileName>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WindChill_i.h</HeaderFileName>
+      <HeaderFileName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">WindChill_i.h</HeaderFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WindChill_i.c</InterfaceIdentifierFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">WindChill_i.c</InterfaceIdentifierFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WindChill_i.c</InterfaceIdentifierFileName>
+      <InterfaceIdentifierFileName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">WindChill_i.c</InterfaceIdentifierFileName>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateStublessProxies>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">true</GenerateStublessProxies>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateStublessProxies>
+      <GenerateStublessProxies Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">true</GenerateStublessProxies>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\kmapstool2.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="WindChill.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
