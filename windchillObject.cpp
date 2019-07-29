@@ -123,6 +123,21 @@ STDMETHODIMP CwindchillObject::raw_GetDownFilePath(long* strkey, BSTR* bstrFile)
 
 		*bstrFile = (_bstr_t)strlocal;
 
+
+		//是否删除ftp文件
+//是否删除ftp文件
+#ifdef	DeleteFTPFILE
+						if (bSucc)
+						{
+							bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+							if (!bSucc)
+							{
+								CString strErrMsg = _T("删除FTP文件失败！");
+								MessageBox(NULL,strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+								return FALSE;
+							}
+						}
+#endif
 		return S_OK;
 	}
 
@@ -2053,6 +2068,22 @@ BOOL CwindchillObject::UpdatePart()
 					return S_FALSE;
 				}
 			}
+
+
+
+//是否删除ftp文件
+#ifdef	DeleteFTPFILE
+			if (bSucc)
+			{
+				bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+				if (!bSucc)
+				{
+					CString strErrMsg = _T("删除FTP文件失败！");
+					MessageBox(NULL,strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+					return FALSE;
+				}
+			}
+#endif
 		}
 	}
 	return TRUE;
@@ -2095,7 +2126,7 @@ LAST:
 	pdfpath = strOutPDF;
 	if (!ExistFile(kmapxpath))
 	{
-		MessageBox(NULL, "kmapx文件不存在！", APS_MSGBOX_TITIE, MB_OK);
+		MessageBox(NULL, _T("kmapx文件不存在！"), APS_MSGBOX_TITIE, MB_OK);
 		return;
 	}
 
@@ -2105,13 +2136,13 @@ LAST:
 
 	if (!ExistFile(pdfpath))
 	{
-		MessageBox(NULL, "请输出pdf文件！", APS_MSGBOX_TITIE, MB_OK);
+		MessageBox(NULL, _T("请输出pdf文件！"), APS_MSGBOX_TITIE, MB_OK);
 		return;
 	}
 
 	if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 	{
-		MessageBox(NULL, "ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+		MessageBox(NULL, _T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
 		return;
 	}
 
@@ -2136,7 +2167,7 @@ LAST:
 	}
 
 	//在此处修改上传至ftp的相对路径
-	CString relativpath = "checkin/doc/";
+	CString relativpath = _T("checkin/doc/");
 	CString strRelDir = relativpath ;//+ GetRelativeDir();
 
 	KmZipUtil kmZipUtil;

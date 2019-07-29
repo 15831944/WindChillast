@@ -76,5 +76,8 @@
 
 //#define COMPANY 
 #define LOCALE
+
+//±àÒëÊÇ·ñÉ¾³ıftpÎÄ¼ş
+#define DeleteFTPFILE
 #pragma warning(disable: 4996)
 

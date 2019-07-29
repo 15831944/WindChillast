@@ -374,6 +374,21 @@ void CDlgMaterialQuery::OnOK()
 		}
 		
 		CDialog::OnOK();
+//是否删除ftp文件
+#ifdef	DeleteFTPFILE
+		if (bSucc)
+		{
+			bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+			if (!bSucc)
+			{
+				CString strErrMsg = _T("删除FTP文件失败！");
+				MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				return;
+			}
+		}
+#endif
+
+
 	}
 #endif
 }

@@ -772,6 +772,20 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 							}
 
 						}
+
+//是否删除ftp文件
+#ifdef	DeleteFTPFILE
+						if (bSucc)
+						{
+							bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+							if (!bSucc)
+							{
+								CString strErrMsg = _T("删除FTP文件失败！");
+								MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+								return FALSE;
+							}
+						}
+#endif
 					}
 					else
 						MessageBox("数据库查询结果为空", APS_MSGBOX_TITIE, MB_OK);
@@ -796,7 +810,7 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 
 			if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 			{
-				MessageBox("ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+				MessageBox(_T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
 				return FALSE;
 			}
 
@@ -823,14 +837,7 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 				MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
 				return FALSE;
 			}
-			//bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
-			//if (!bSucc)
-			//{
-			//	CString strErrMsg = _T("删除文件失败！");
-			//	//strErrMsg.Format(_T("下载文件【%s】失败！"), strFTPName);
-			//	MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
-			//	return FALSE;
-			//} 
+			
 
 			if (strFTPName.Find(_T(".zip")) >= 0)  //传递的压缩文件包
 			{
@@ -924,6 +931,20 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 				MessageBox("解压模型文件失败！", APS_MSGBOX_TITIE, MB_OK);
 				return FALSE;
 			}
+
+			//是否删除ftp文件
+#ifdef	DeleteFTPFILE
+			if (bSucc)
+			{
+				bSucc = m_FTPInterface.Delete(strlocal, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strFTPPath, strFTPName, CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd());
+				if (!bSucc)
+				{
+					CString strErrMsg = _T("删除FTP文件失败！");
+					MessageBox(strErrMsg, APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+					return FALSE;
+				}
+			}
+#endif
 		}
 	}
 	return FALSE;
