@@ -220,7 +220,14 @@ void CDlgProcEdit::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 		return ;
 
 	CString docNumber = m_Resultlist.GetItemText(row, index);
-	CWindChillSetting::m_strpartFirstName= docNumber.Right(docNumber.GetLength()-docNumber.FindOneOf("_")-1);
+
+	auto strArray = split(docNumber.GetBuffer(), "_");
+	docNumber.ReleaseBuffer();
+	if (strArray.empty()&&strArray.size()>2)
+	{
+		return;
+	}
+	CWindChillSetting::m_strpartFirstName = strArray[1].c_str();
 
 	CString Xmlcontent = m_WebServiceInterface.getDocInfoOfContent(operType, docNumber);
 	if (Xmlcontent.IsEmpty())
@@ -251,7 +258,7 @@ void CDlgProcEdit::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 	{
-		MessageBox("ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+		MessageBox(_T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
 
 		return;
 	}

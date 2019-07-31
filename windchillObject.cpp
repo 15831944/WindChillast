@@ -2098,6 +2098,11 @@ BOOL CwindchillObject::UpdatePart()
 void CwindchillObject::CheckinProc(CString kmapxpath, CString pdfpath)
 {
 
+	auto  PropList = m_pProcess->GetUserPropList();
+	auto pos = PropList->SeekProp(_T("工艺方式"));
+	auto prop = PropList->GetAt(pos);
+	CString craftMethod = prop.ConvertTo();
+
 LAST:
 	CString strPDFName = "";
 	//PDF文件
@@ -2214,11 +2219,13 @@ LAST:
 			return;
 		}
 
+		
 		CString strInput =  
 			CString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
 			"<checkInDoc>"+
 			"<partNumber>"+CWindChillSetting::m_strpartFirstName+"</partNumber>"+
 			"<fileName>"+GetFileName(zipPath)+"</fileName>"+
+			"<craftMethod>"+ craftMethod +"</craftMethod>"
 			"</checkInDoc>";
 
 		auto Xmlcontent = m_WebserverInterface.CheckInDoc("4", strInput);
