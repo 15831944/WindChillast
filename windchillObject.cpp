@@ -39,15 +39,19 @@
 #include "Partinfo.h"
 #include "PBomCreate.h"
 #include "PBOMUtil.h"
-
+#include "DlgCollect.h"
 
 
 using namespace std;
 #define  MSG_FILE_NEW WM_USER + 2089
 #define  MSG_UPDATE_PART WM_USER + 2091
 
-bool g_islogin = false;   //
 
+#ifdef DEV_TMP
+	bool g_islogin = true;   //
+#else
+	bool g_islogin = false;   //
+#endif
 
 STDMETHODIMP CwindchillObject::InterfaceSupportsErrorInfo(REFIID riid)
 {
@@ -66,6 +70,7 @@ STDMETHODIMP CwindchillObject::InterfaceSupportsErrorInfo(REFIID riid)
 STDMETHODIMP CwindchillObject::raw_IsChangeGetDownFileMode(void)
 {
 	return S_OK;
+
 }
 
 
@@ -95,7 +100,7 @@ STDMETHODIMP CwindchillObject::raw_GetDownFilePath(long* strkey, BSTR* bstrFile)
 
 		if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 		{
-			MessageBox(NULL, "ftp连接失败！", APS_MSGBOX_TITIE, MB_OK);
+			MessageBox(NULL, _T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
 			return False;
 		}
 
@@ -2400,7 +2405,14 @@ STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 			UpdatePart();
 			//UserPropIsEdit();
 		}
-		
+		else if (nID==m_CollectCmd)
+		{
+			CDlgCollect dlg;
+			dlg.DoModal();
+		}
+		else if (nID ==m_ChangeCmd)
+		{
+		}
 		return S_OK;
 }
 
@@ -2410,7 +2422,8 @@ STDMETHODIMP CwindchillObject::OnUpdatePluginCommandUI(long nID, long* state)
 	if (nID == m_nLoginCmd || nID == m_nPBOMCmd || nID == m_nPBomEditCmdl ||
 		nID == m_nMaterialCmd || nID == m_nProcRuleCmd || nID == m_nCheckinPBomCmd ||
 		nID == m_CreatProcCmd || nID == m_ProcQueryCmd || nID == m_ProcCheckInCmd ||
-		nID == m_ProcPdfEditCmd ||nID == m_ImportEquiesCmd ||nID == m_UpdatePartCmd
+		nID == m_ProcPdfEditCmd ||nID == m_ImportEquiesCmd ||nID == m_UpdatePartCmd||
+		nID==m_CollectCmd || nID==m_ChangeCmd
 		)
 	{
 		IAPSDocumentPtr doc = m_pApplication->GetCurrentDocment();
@@ -2496,6 +2509,14 @@ STDMETHODIMP CwindchillObject::OnUpdatePluginCommandUI(long nID, long* state)
 			*state = PLUGIN_CMD_UI_ENABLE;
 		}
 		else if (nID == m_UpdatePartCmd && g_islogin &&isshowUpdatePart)
+		{
+			*state = PLUGIN_CMD_UI_ENABLE;
+		}
+		else if (nID == m_CollectCmd && g_islogin )
+		{
+			*state = PLUGIN_CMD_UI_ENABLE;
+		}
+		else if (nID == m_ChangeCmd && g_islogin )
 		{
 			*state = PLUGIN_CMD_UI_ENABLE;
 		}
@@ -2592,13 +2613,31 @@ STDMETHODIMP CwindchillObject::OnMainFrameCreated()
 	m_UpdatePartCmd = pBtn52->GetCmdID();		//记录命令ID
 	pPanel5->AddChild(pBtn52);
 
-	pTab->put_Label(_bstr_t("Windchill集成"));
+	IAPSRibbonGroupPtr pPanel6 = pFactory->CreateRibbonGroup();
+	IAPSRibbonButtonPtr pBtn60 = pFactory->CreateRibbonButton();
+	(IAPSRibbonElementPtr)pBtn60->put_Enable(false);
+	pBtn60->put_Label(_bstr_t("汇总"));
+	m_CollectCmd = pBtn60->GetCmdID();		//记录命令ID
+	pPanel6->AddChild(pBtn60);
+
+	IAPSRibbonButtonPtr pBtn61 = pFactory->CreateRibbonButton();
+	(IAPSRibbonElementPtr)pBtn61->put_Enable(false);
+	pBtn61->put_Label(_bstr_t("更改单"));
+	m_ChangeCmd = pBtn61->GetCmdID();		//记录命令ID
+	pPanel6->AddChild(pBtn61);
+
+	
+
+
+	pTab->put_Label(_bstr_t(_T("Windchill集成")));
 	pTab->AddGroup(pPanel1);
 	pTab->AddGroup(pPanel2);
 	pTab->AddGroup(pPanel3);
 	pTab->AddGroup(pPanel4);
 	pTab->AddGroup(pPanel5);
+	pTab->AddGroup(pPanel6);
 	pRibbonBar->AddRibbonTab(pTab);
+
 	//pRibbonBar->Layout(); 统一在创建端刷新TAB
 
 	m_PdfConfigDatas = new CArray<CAPSGridPropData*>;

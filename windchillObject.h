@@ -162,6 +162,9 @@ private:
 	UINT m_ImportEquiesCmd;
 	UINT m_UpdatePartCmd;
 
+	UINT m_CollectCmd;
+	UINT m_ChangeCmd;
+
 	CAPSModel *m_pModel;
 
 	CFTPInterface m_FTPInterface;

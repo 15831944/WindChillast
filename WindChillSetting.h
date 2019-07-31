@@ -2,6 +2,8 @@
 
 class CFTPInterface;
 #include <map>
+#include <vector>
+#include <string>
 //////////////////////////////////////////////////////////////////////////////
 namespace KmWindChillCommon
 {
@@ -94,6 +96,8 @@ public:
 	static bool  LoadResourceTyoeMatch();
 	static bool  LoadReadModelConfig();
 
+	static bool LoadCollectionMatch();
+
 	static bool ReadProAry(CString strFilter,CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData>& propArys);
 
 	static void SetLoginInfo(CString strUser, CString strPass);
@@ -165,7 +169,10 @@ public:
 
 	static CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> m_strResourceTypeMatch;    //工艺装备类型
 
-	static CString m_strWebURL;//webservice路径
+	static CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> m_strCollectionMatch;    //汇总类型
+
+
+	static CString m_strWebURL; //webservice路径
 
 	static std::vector<std::string> GYJID;    //工艺件ID
 	static std::vector<std::string> PROCUDEID;    //所有产品ID

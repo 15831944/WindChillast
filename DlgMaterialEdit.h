@@ -48,7 +48,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
 	
-	
+	afx_msg void DeleteMatertion();
 	afx_msg void OnNMRClickWindchillPartlist(NMHDR *pNMHDR, LRESULT *pResult);
 	DECLARE_MESSAGE_MAP()
 
@@ -91,5 +91,5 @@ public:
 	CComboBox m_ComboBox;
 	bool isSaved;
 	
-	afx_msg void DeleteMatertion();
+	
 };

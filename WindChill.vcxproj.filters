@@ -120,6 +120,9 @@
     <ClCompile Include="CreatePbom.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DlgCollect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -240,6 +243,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CreatePbom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgCollect.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

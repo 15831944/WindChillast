@@ -24,6 +24,8 @@ CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetti
 CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetting::m_strChangeinfoMatch;
 
 CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetting::m_strResourceTypeMatch;
+
+CArray<KmWindChillCommon::PropData, KmWindChillCommon::PropData> CWindChillSetting::m_strCollectionMatch;
 CString CWindChillSetting::m_strFTPURL = _T("");
 CString CWindChillSetting::m_strFTPPort = _T("");
 CString CWindChillSetting::m_strFTPUserName = _T("");
@@ -189,6 +191,8 @@ void CWindChillSetting::LoadSettings()
 
 			LoadChangeinfoMatch();
 			LoadResourceTyoeMatch();
+
+			LoadCollectionMatch();
 		}
 	}
 	catch (...)
@@ -529,4 +533,15 @@ bool CWindChillSetting::LoadReadModelConfig()
 	}
 
 	return true;
+}
+
+bool CWindChillSetting::LoadCollectionMatch()
+{
+	if (m_strIni.IsEmpty())
+	{
+		return false;
+	}
+
+	bool bRet = ReadProAry(_T("»ã×ÜÐÅÏ¢Ó³Éä"), m_strCollectionMatch);
+	return bRet;
 }

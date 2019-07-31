@@ -70,7 +70,7 @@
 #define VOID_PTR		byte*
 
 #define PULIGN_IN   //控制dev_include 中文件
-//#define DEV_TMP  //打开开发模式
+#define DEV_TMP  //打开开发模式
 
 #define APS_MSGBOX_TITIE "KM 3DAST"
 
