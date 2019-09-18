@@ -113,7 +113,6 @@ BEGIN_MESSAGE_MAP(CDlgMaterialEdit, CDialog)
 	ON_BN_CLICKED(IDC_WINDCHILL_SAVE, SaveDlg)
 	ON_BN_CLICKED(IDC_WINDCHILL_IMPORT, Import)
 	ON_BN_CLICKED(IDC_WINDCHILL_UPLOAD, Upload)
-	
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	ON_CBN_KILLFOCUS(IDC_COMBO1, &CDlgMaterialEdit::OnCbnKillfocusCombo1)
@@ -351,8 +350,6 @@ void CDlgMaterialEdit::SelectItem(CString item)
 	wait.Restore();
 	//auto t_2 = GetTickCount();
 	//AfxMessageBox(to_string(t_2 - t_1).c_str());
-
-	
 }
 
 void  CDlgMaterialEdit::SelectPartition()
@@ -496,8 +493,6 @@ void  CDlgMaterialEdit::SelectPartition()
 	}
 	wait.Restore();
 	auto t_22 = GetTickCount();
-
-
 }
 
 //双击list contorl可编辑
@@ -1352,10 +1347,6 @@ void CDlgMaterialEdit::SaveDlg()
 		}
 		char *Path  =m_path.GetBuffer(m_path.GetLength());
 		
-		//auto Path =GetFilePath(m_path);
-		//auto changepath =changePartName(pBomNumber);
-
-		//auto SavePath =Path+changepath+".xml";
 		m_path.ReleaseBuffer(m_path.GetLength());
 		
 		bool flag=saveXML(Path);
@@ -1911,8 +1902,6 @@ void CDlgMaterialEdit::OnSizing(UINT fwSide, LPRECT pRect)
 	EASYSIZE_MINSIZE(600, 370, fwSide, pRect);
 }
 
-
-
 bool CDlgMaterialEdit::saveXML(CString path)
 {
 
@@ -2021,8 +2010,7 @@ bool CDlgMaterialEdit::saveXML(CString path)
 
 	return flag;
 }
-
-
+//增加右键删除辅材信息
 void CDlgMaterialEdit::OnNMRClickWindchillPartlist(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
@@ -2036,7 +2024,7 @@ void CDlgMaterialEdit::OnNMRClickWindchillPartlist(NMHDR *pNMHDR, LRESULT *pResu
 	m_row = pNMListView->iItem;
 	m_col = pNMListView->iSubItem;
 	
-	//双击空白行，新添加一行
+	
 	auto hitem =m_materialtypeTree.GetSelectedItem();
 	if ( selectHitem != NULL &&m_row!=-1)
 	{

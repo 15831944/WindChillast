@@ -117,10 +117,22 @@
     <ClCompile Include="DlgPDFExport.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CreatePbom.cpp">
+    <ClCompile Include="DlgCollect.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DlgCollect.cpp">
+    <ClCompile Include="DlgInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgChangeGid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgGrid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgChange.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PdfDataToXMl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,10 +254,22 @@
     <ClInclude Include="DlgPDFExport.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CreatePbom.h">
+    <ClInclude Include="DlgCollect.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DlgCollect.h">
+    <ClInclude Include="DlgInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgChangeGid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgGrid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgChange.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PdfDataToXMl.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

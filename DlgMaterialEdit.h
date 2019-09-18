@@ -90,6 +90,4 @@ private:
 public:
 	CComboBox m_ComboBox;
 	bool isSaved;
-	
-	
 };

@@ -52,6 +52,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -120,7 +121,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>..\..\Project\VC2013\$(Platform)\$(Configuration)_int\$(ProjectName)\</IntDir>
-    <OutDir>D:\KMSOFT\KMAPS\</OutDir>
+    <OutDir>D:\KMSOFT\KMAPS</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DbgRelease|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -142,10 +143,12 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\include;..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)std_$(TargetName)_x86$(TargetExt)</OutputFile>
-      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurld.lib</AdditionalDependencies>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurld.lib;Output3DPdf.lib</AdditionalDependencies>
       <MapFileName />
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -199,7 +202,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\include\BCG</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -210,8 +213,8 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\include;..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib;Output3DPdf.lib;BCGCBPRO2520100.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)std_$(TargetName)_x86$(TargetExt)</OutputFile>
       <GenerateMapFile>true</GenerateMapFile>
     </Link>
@@ -269,11 +272,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;IPLIB;NEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\..\include\BCG</AdditionalIncludeDirectories>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>..\include\libcurl_include\libcurl;..\include\dev_include;..\include\BCG</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -283,10 +285,10 @@
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalLibraryDirectories>..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\include;..\include\dev_lib\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>APSModelView.lib;zlibwapi.lib;processcore.lib;UtilityFunction.lib;ProductCore.lib;ConfMgr.lib;EquipCore.lib;libcurl.lib;BCGCBPRO2520140.lib;Output3DPdf.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)std_$(TargetName)_x64$(TargetExt)</OutputFile>
-      <GenerateMapFile>false</GenerateMapFile>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -341,12 +343,15 @@
   <ItemGroup>
     <ClCompile Include="Basex64.cpp" />
     <ClCompile Include="CAcroAXDocShim.cpp" />
-    <ClCompile Include="DlgCollect.cpp" />
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="CreatePbom.cpp" />
     <ClCompile Include="DBOperation.cpp" />
     <ClCompile Include="DirectoryDialog.cpp" />
     <ClCompile Include="DlgAddMaterial.cpp" />
+    <ClCompile Include="DlgChange.cpp" />
+    <ClCompile Include="DlgChangeGid.cpp" />
+    <ClCompile Include="DlgCollect.cpp" />
+    <ClCompile Include="DlgGrid.cpp" />
+    <ClCompile Include="DlgInfo.cpp" />
     <ClCompile Include="DlgLogIn.cpp" />
     <ClCompile Include="DlgMaterialEdit.cpp" />
     <ClCompile Include="DlgMaterialQuery.cpp" />
@@ -361,6 +366,7 @@
     <ClCompile Include="Partinfo.cpp" />
     <ClCompile Include="PBomCreate.cpp" />
     <ClCompile Include="PBOMUtil.cpp" />
+    <ClCompile Include="PdfDataToXMl.cpp" />
     <ClCompile Include="soapC.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -394,7 +400,6 @@
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="CRange.h" />
-    <ClInclude Include="CreatePbom.h" />
     <ClInclude Include="CWorkbook.h" />
     <ClInclude Include="CWorkbooks.h" />
     <ClInclude Include="CWorksheet.h" />
@@ -402,7 +407,11 @@
     <ClInclude Include="DBOperation.h" />
     <ClInclude Include="DirectoryDialog.h" />
     <ClInclude Include="DlgAddMaterial.h" />
+    <ClInclude Include="DlgChange.h" />
+    <ClInclude Include="DlgChangeGid.h" />
     <ClInclude Include="DlgCollect.h" />
+    <ClInclude Include="DlgGrid.h" />
+    <ClInclude Include="DlgInfo.h" />
     <ClInclude Include="DlgLogIn.h" />
     <ClInclude Include="DlgMaterialEdit.h" />
     <ClInclude Include="DlgMaterialQuery.h" />
@@ -417,6 +426,7 @@
     <ClInclude Include="Partinfo.h" />
     <ClInclude Include="PBomCreate.h" />
     <ClInclude Include="PBOMUtil.h" />
+    <ClInclude Include="PdfDataToXMl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="soapH.h" />
     <ClInclude Include="soapStub.h" />

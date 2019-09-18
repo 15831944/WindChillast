@@ -7,9 +7,9 @@
 #endif //APSTUDIO_INVOKED
 
 #ifndef AUTO_BUILD_REVISION
-	#include "..\..\include\MainVersion.h"
+	//#include "..\..\include\MainVersion.h"
 #else
-	#include "..\..\include\_MainVersion.h"
+	//#include "..\..\include\_MainVersion.h"
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,10 @@
 // Version
 //
 
+/*
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION FILE_VERSION
- PRODUCTVERSION PRODUCT_VERSION
+// FILEVERSION FILE_VERSION
+// PRODUCTVERSION PRODUCT_VERSION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -55,3 +56,4 @@ BEGIN
     END
 END
 
+*/

@@ -32,7 +32,7 @@
 #include "DlgProcRule.h"
 #include "EquipActionIn.h"
 #include "Equips.h"
-#include"APSProp.h"
+
 #include "DlgAddMaterial.h"
 #include "DlgPDFExport.h"
 #include "DlgPDFConfig.h"
@@ -40,6 +40,9 @@
 #include "PBomCreate.h"
 #include "PBOMUtil.h"
 #include "DlgCollect.h"
+#include "DlgChange.h"
+#include "PdfDataToXMl.h"
+#include "PDFData.h"
 
 
 using namespace std;
@@ -90,13 +93,12 @@ STDMETHODIMP CwindchillObject::raw_GetDownFilePath(long* strkey, BSTR* bstrFile)
 
 		auto path = CWindChillXml::GetPath(str);
 
-		//path = "/notconvert";
-		//CString strFTPPath="notconvert", strFTPName = "1_gleich_winkel.prt", strModelName = "";
+		
 		CString strFTPPath, strFTPName , strModelName ;
 		//获取xml读取的文件，引入产品；打开模型文件
 		//ftp下载. 
 
-		//strFTPPath = path;
+		
 
 		if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
 		{
@@ -129,7 +131,6 @@ STDMETHODIMP CwindchillObject::raw_GetDownFilePath(long* strkey, BSTR* bstrFile)
 		*bstrFile = (_bstr_t)strlocal;
 
 
-		//是否删除ftp文件
 //是否删除ftp文件
 #ifdef	DeleteFTPFILE
 						if (bSucc)
@@ -331,10 +332,12 @@ int CwindchillObject::OutputPDF(CString sPathFile, int iType, CString &sOutputFi
 			dlgConfig.setTemplateName(sPathFile);
 			dlgConfig.SetProcess(m_pProcess);
 			dlgConfig.setTemplateType(iType);
+
 			if (dlgConfig.DoModal())
 			{
 
 			}
+
 			int iMode = dlgConfig.getMode();
 			if (iMode == 0)//取消
 			{
@@ -378,19 +381,130 @@ int CwindchillObject::OutputPDF(CString sPathFile, int iType, CString &sOutputFi
 
 		int nCodeError = 0;
 
-		BOOL bOutput = pOutPutPdf(m_pModel, sPathFile, "", sOutputFilePath, true, 1, iType, nCodeError);
-		if (!bOutput)
+		TCHAR TempDir[1024] = {};
+		GetTempPath(1024, TempDir);
+		CString sTempDir(TempDir);
+		sTempDir = sTempDir + _T("KM3DCAPP-AWORK\\");
+
+		auto collectXmlPath = sTempDir + "save.xml";
+
+		if (!ExistFile(collectXmlPath))  //是否存在汇总信息和更改单信息
 		{
-			MessageBox(NULL, "PDF导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
-			return FALSE;
+			BOOL bOutput = pOutPutPdf(m_pModel, sPathFile, "", sOutputFilePath, true, 1, iType, nCodeError);
+			if (!bOutput)
+			{
+				MessageBox(NULL, "PDF导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				return FALSE;
+			}
+			else
+			{
+				CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+			}
+
+			FreeLibrary(hLib);
+			hLib = NULL;
 		}
 		else
 		{
-			CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
-		}
 
-		FreeLibrary(hLib);
-		hLib = NULL;
+			XmlToPdfdata pdfdata;
+			pdfdata.GetData(collectXmlPath);
+
+			auto m_PageData = pdfdata.GetPageData();
+
+			typedef BOOL(WINAPI *GetPutPdfInfo)(CAPSModel*, LPCTSTR, LPCTSTR, LPCTSTR, bool, int, int, int&, COutPut3DPdf *&);
+
+			GetPutPdfInfo pGetPutPdf = (GetPutPdfInfo)GetProcAddress(hLib, _T("GetPutPdfInfo"));
+
+			if (pGetPutPdf == NULL)
+			{
+				FreeLibrary(hLib);
+				hLib = NULL;
+				MessageBox(NULL, "未能导出PDF,请检查Output3DPdf.dll是否存在.\n", APS_MSGBOX_TITIE, MB_OK);
+			}
+
+			COutPut3DPdf *m_putpdf;
+
+			pGetPutPdf(m_pModel, sPathFile, "", sOutputFilePath, true, 1, iType, nCodeError,m_putpdf);
+
+			if (m_putpdf)
+			{
+				auto config = m_putpdf->GetPdfConfig();
+				auto data = m_putpdf->GetPdfData();
+
+				if (data)
+				{
+					for (auto it = m_PageData.begin(); it != m_PageData.end(); ++it)
+					{
+						auto vpages = it->second;
+
+						for (auto pageItem = vpages.begin(); pageItem != vpages.end(); ++pageItem)
+						{
+							auto name = (*pageItem)->m_strDefName;
+							for (auto i = 0; i < data->GetPage()->GetSize(); ++i)
+							{
+								auto &page = data->GetPage()->GetAt(i);
+								if (name.CompareNoCase(page->m_strDefName) == 0 && (*pageItem)->m_No == page->m_No)
+								{
+									page = *pageItem;
+
+								}
+							}
+						}
+					}
+
+				}
+			}
+
+			auto changePath = sTempDir + "changeinfo.xml";
+			if (ExistFile(changePath))
+			{
+				ChangeXmlToPageData temp(changePath);
+
+				temp.GenPageData();
+				auto changinfo = temp.GetChangInfo();
+				auto data = m_putpdf->GetPdfData();
+				data->AddPage(changinfo);
+				BOOL bOutPut;
+
+				m_putpdf->SetOutPath(sOutputFilePath);
+				bOutPut = m_putpdf->OutPutNew();
+
+				if (!bOutPut)
+				{
+					MessageBox(NULL, "PDF导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				
+				}
+				else
+				{
+					CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+				}
+
+			}
+			else
+			{
+				BOOL bOutPut;
+
+				m_putpdf->SetOutPath(sOutputFilePath);
+				bOutPut = m_putpdf->OutPutNew();
+
+				if (!bOutPut)
+				{
+					MessageBox(NULL, "PDF导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+
+				}
+				else
+				{
+					CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+				}
+			}
+
+			FreeLibrary(hLib);
+			hLib = NULL;
+
+			
+		}
+	
 	}
 	else
 	{
@@ -488,7 +602,7 @@ BOOL CwindchillObject::OpenPdfEditPage(CString sPathFile, CAPSModel* pModel, int
 		{
 			pInitA3DPDF();
 		}
-
+		
 		if (dlg.DoModal())
 		{
 			dlg.getPath(sOutputFilePath, sLoadFilePath);
@@ -497,30 +611,7 @@ BOOL CwindchillObject::OpenPdfEditPage(CString sPathFile, CAPSModel* pModel, int
 			m_PdfConfigDatas->RemoveAll();
 			dlg.GetProcTempConfig(m_PdfConfigDatas);
 		}
-
-		if (sOutputFilePath.IsEmpty() || sLoadFilePath.IsEmpty())
-			return FALSE;
-
-		SetParam(pModel, m_pProcess, sLoadFilePath, sOutputFilePath);
-
-		CApsWaitCur waiter1;
-		typedef BOOL(WINAPI *OutPutPdf)(CAPSModel*, LPCTSTR, LPCTSTR, LPCTSTR, bool, int, int, int&);
-
-		OutPutPdf pOutPutPdf = (OutPutPdf)GetProcAddress(hLib, _T("OutPutPdf"));
-
-		if (pOutPutPdf == NULL)
-		{
-			FreeLibrary(hLib);
-			hLib = NULL;
-
-			//KmMessageBox(ResourceString(IDS_APM_OUTPUT3D_INVALID, "请检查Output3DPdf.dll是否存在.\n"), ResourceString(IDS_APM_TIPS, APS_MSGBOX_TITIE), MB_OK | MB_ICONERROR);
-			//AfxMessageBox("请检查Output3DPdf.dll是否存在.\n");
-			MessageBox(NULL, "请检查Output3DPdf.dll是否存在.\n", APS_MSGBOX_TITIE, MB_OK);
-			return FALSE;
-		}
-
-		int nCodeError = 0;
-
+		
 		IAPSDocumentPtr doc = m_pApplication->GetCurrentDocment();
 		if (!doc)
 		{
@@ -529,58 +620,156 @@ BOOL CwindchillObject::OpenPdfEditPage(CString sPathFile, CAPSModel* pModel, int
 		}
 
 		CAPSModel *pModel1 = (CAPSModel*)doc->GetAPSModel();
-		BOOL bOutput = pOutPutPdf(pModel1, sLoadFilePath, "", sOutputFilePath, true, 1, iType, nCodeError);
-		if (!bOutput)
+	
+		TCHAR TempDir[1024] = {};
+		GetTempPath(1024, TempDir);
+		CString sTempDir(TempDir);
+		sTempDir = sTempDir + _T("KM3DCAPP-AWORK\\");
+
+		auto collectXmlPath = sTempDir + "save.xml";
+
+		if (!ExistFile(collectXmlPath))  //是否存在汇总信息和更改单信息
 		{
-			/*switch (nCodeError)
+
+			if (sOutputFilePath.IsEmpty() || sLoadFilePath.IsEmpty())
+				return FALSE;
+
+			SetParam(pModel1, m_pProcess, sLoadFilePath, sOutputFilePath);
+
+			int nCodeError = 0;
+
+			CApsWaitCur waiter1;
+			typedef BOOL(WINAPI *OutPutPdf)(CAPSModel*, LPCTSTR, LPCTSTR, LPCTSTR, bool, int, int, int&);
+
+			OutPutPdf pOutPutPdf = (OutPutPdf)GetProcAddress(hLib, _T("OutPutPdf"));
+
+			if (pOutPutPdf == NULL)
 			{
-			case IDS_APM_TEMPLATE_ANIMATION3D:
-			KmMessageBox(ResourceString(IDS_APM_TEMPLATE_ANIMATION3D, _T("XML配置")),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			break;
-			case IDS_APM_XMLTEMPLATE_ERROR:
-			KmMessageBox(ResourceString(IDS_APM_XMLTEMPLATE_ERROR, _T("XML格式")),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			break;
-			case IDS_APM_TEMPLATE:
-			KmMessageBox(ResourceString(IDS_APM_TEMPLATE, _T("XML配置")),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			break;
-			case IDS_LOAD_MODEL_ERROR:
-			KmMessageBox(ResourceString(IDS_LOAD_MODEL_ERROR, _T("加载模型")),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			break;
-			case IDS_APM_PUBLISH_INITFAIL:
-			KmMessageBox(ResourceString(IDS_APM_PUBLISH_INITFAIL, _T("初始化hoops_publish失败!")),APS_MSGBOX_TITIE,MB_ICONERROR);
-			break;
-			case IDS_APM_VCLIB_ERROR:
-			KmMessageBox(ResourceString(IDS_APM_VCLIB_ERROR, _T("请安装运行时库!")),APS_MSGBOX_TITIE,MB_ICONWARNING);
-			break;
-			case IDS_APM_PUBLISH_DIR_ERROR:
-			KmMessageBox(ResourceString(IDS_APM_PUBLISH_DIR_ERROR, _T("hoops_publish相应库目录错误，请检查相应目录!")),APS_MSGBOX_TITIE,MB_ICONERROR);
-			break;
-			case IDS_APM_PUBLISH_INVALID:
-			KmMessageBox(ResourceString(IDS_APM_PUBLISH_INVALID, _T("hoops_publish注册码已失效.")),APS_MSGBOX_TITIE,MB_ICONERROR);
-			break;
-			default:
-			KmMessageBox(ResourceString(IDS_APM_FAILEDOUTPUTPDF, _T("PDF输出")),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			break;
-			}*/
-			//AfxMessageBox("导出失败.\n");
-			MessageBox(NULL, "导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
-			return FALSE;
+				FreeLibrary(hLib);
+				hLib = NULL;
+
+				MessageBox(NULL, "请检查Output3DPdf.dll是否存在.\n", APS_MSGBOX_TITIE, MB_OK);
+				return FALSE;
+			}
+
+
+			BOOL bOutput = pOutPutPdf(pModel1, sPathFile, "", sOutputFilePath, true, 1, iType, nCodeError);
+			if (!bOutput)
+			{
+				MessageBox(NULL, "PDF导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				return FALSE;
+			}
+			else
+			{
+				CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+			}
+
+			FreeLibrary(hLib);
+			hLib = NULL;
+
+			if (!bOutput)
+			{
+				MessageBox(NULL, "导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				return FALSE;
+			}
+			else
+			{
+				MessageBox(NULL, "导出完成.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+			}
 		}
 		else
 		{
-			//KmMessageBox(ResourceString(IDS_APM_OUTPUTFINISHMSG, "输出完成!"),APS_MSGBOX_TITIE,MB_ICONINFORMATION);
-			//AfxMessageBox("导出完成.\n");
-			MessageBox(NULL, "导出完成.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
-			CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
-		}
 
-		FreeLibrary(hLib);
-		hLib = NULL;
+			XmlToPdfdata pdfdata;
+			pdfdata.GetData(collectXmlPath);
+
+			auto m_PageData = pdfdata.GetPageData();
+
+			typedef BOOL(WINAPI *GetPutPdfInfo)(CAPSModel*, LPCTSTR, LPCTSTR, LPCTSTR, bool, int, int, int&, COutPut3DPdf *&);
+
+			GetPutPdfInfo pGetPutPdf = (GetPutPdfInfo)GetProcAddress(hLib, _T("GetPutPdfInfo"));
+
+			if (pGetPutPdf == NULL)
+			{
+				FreeLibrary(hLib);
+				hLib = NULL;
+				MessageBox(NULL, "未能导出PDF,请检查Output3DPdf.dll是否存在.\n", APS_MSGBOX_TITIE, MB_OK);
+			}
+
+			COutPut3DPdf *m_putpdf;
+			int nCodeError=0;
+			pGetPutPdf(pModel1, sPathFile, "", sOutputFilePath, true, 1, iType, nCodeError, m_putpdf);
+
+			if (m_putpdf)
+			{
+				auto config = m_putpdf->GetPdfConfig();
+				auto data = m_putpdf->GetPdfData();
+
+				if (data)
+				{
+					for (auto it = m_PageData.begin(); it != m_PageData.end(); ++it)
+					{
+						auto vpages = it->second;
+
+						for (auto pageItem = vpages.begin(); pageItem != vpages.end(); ++pageItem)
+						{
+							auto name = (*pageItem)->m_strDefName;
+							for (auto i = 0; i < data->GetPage()->GetSize(); ++i)
+							{
+								auto &page = data->GetPage()->GetAt(i);
+								if (name.CompareNoCase(page->m_strDefName) == 0 && (*pageItem)->m_No == page->m_No)
+								{
+									page = *pageItem;
+
+								}
+							}
+						}
+					}
+
+				}
+			}
+			BOOL bOutPut = false;
+			auto changePath = sTempDir + "changeinfo.xml";
+		
+		
+			if (ExistFile(changePath))
+			{
+	
+				ChangeXmlToPageData temp(changePath);
+
+				temp.GenPageData();
+				auto changinfo = temp.GetChangInfo();
+				auto data = m_putpdf->GetPdfData();
+				data->AddPage(changinfo);
+				
+				m_putpdf->m_pData = data;
+				m_putpdf->SetOutPath(sOutputFilePath);
+				bOutPut = m_putpdf->OutPutNew();
+			}
+			else
+			{
+				m_putpdf->SetOutPath(sOutputFilePath);
+				bOutPut = m_putpdf->OutPutNew();
+
+			}
+			if (!bOutPut)
+			{
+				MessageBox(NULL, "导出失败.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+			}
+			else
+			{
+				MessageBox(NULL, "导出完成.\n", APS_MSGBOX_TITIE, MB_OK | MB_TOPMOST);
+				CWindChillSetting::SetPdfPath_Rule(sOutputFilePath);
+			}
+			FreeLibrary(hLib);
+			hLib = NULL;
+
+
+		}
 	}
 	else
 	{
-		//CString ssInfo = ResourceString(IDS_APM_OUTPUT3D_INVALID, "请检查Output3DPdf.dll是否存在.\n");
-		//KmMessageBox(ssInfo,APS_MSGBOX_TITIE,MB_ICONINFORMATION);
 		MessageBox(NULL, "请检查Output3DPdf.dll是否存在.\n", APS_MSGBOX_TITIE, MB_OK);
 		return FALSE;
 	}
@@ -1967,7 +2156,7 @@ BOOL CwindchillObject::UpdatePart()
 					}
 
 					CString ProductPath = parttop->value["epmfilename"].c_str();
-					//ProductPath = "1.catpart";
+					
 					auto partdir = strDir + GetMainFileName(path) + _T("\\");
 					auto isFind = find.FindFile(partdir + ProductPath);
 					if (isFind)
@@ -2100,8 +2289,13 @@ void CwindchillObject::CheckinProc(CString kmapxpath, CString pdfpath)
 
 	auto  PropList = m_pProcess->GetUserPropList();
 	auto pos = PropList->SeekProp(_T("工艺方式"));
-	auto prop = PropList->GetAt(pos);
-	CString craftMethod = prop.ConvertTo();
+	CString craftMethod;
+	if (pos)
+	{
+		auto prop = PropList->GetAt(pos);
+		craftMethod = prop.ConvertTo();
+	}
+	
 
 LAST:
 	CString strPDFName = "";
@@ -2132,7 +2326,6 @@ LAST:
 	if (strPDFName.IsEmpty())
 		return;
 
-
 	pdfpath = strOutPDF;
 	if (!ExistFile(kmapxpath))
 	{
@@ -2141,18 +2334,11 @@ LAST:
 	}
 
 	auto dirty=m_pModel->m_bModify;
-	//auto dirty =m_pModel->GetProduct()->IsModify();
-	//auto dirty1 = m_pModel->GetProcess()->IsModify();
+	
 
 	if (!ExistFile(pdfpath))
 	{
 		MessageBox(NULL, _T("请输出pdf文件！"), APS_MSGBOX_TITIE, MB_OK);
-		return;
-	}
-
-	if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
-	{
-		MessageBox(NULL, _T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
 		return;
 	}
 
@@ -2163,16 +2349,12 @@ LAST:
 
 	if (!GenAlonePath(strDir, strNewSubPath))
 	{
-		//strErrorInfo = CString(ResourceString(IDS_KMAPSTOOL2_FAILEDCD, "创建目录失败！"));
-		//break;
 		return;
 	}
 
 	//创建路径
 	if (!CreateDirectory(strNewSubPath, NULL))
 	{
-		//strErrorInfo = CString(ResourceString(IDS_KMAPSTOOL2_FAILEDCD, "创建目录失败！"));
-		//break;
 		return;
 	}
 
@@ -2183,12 +2365,14 @@ LAST:
 	KmZipUtil kmZipUtil;
 	if (kmZipUtil.OpenZipFile(kmapxpath, KmZipUtil::ZipOpenForUncompress))
 	{
+
 		if (!ExistDir(strNewSubPath))
 		{
 			if (!::CreateDirectory(strNewSubPath, NULL))
 			{
 			}
 		}
+
 		kmZipUtil.UnZipAll(strNewSubPath);
 	}
 	kmZipUtil.CloseZipFile();
@@ -2205,12 +2389,29 @@ LAST:
 		if (zip.CreateZipFile(zipPath))
 		{
 			zip.ZipFile(kmapxpath, NULL);
-			zip.ZipFile(pdfpath, NULL);
+
+			auto docInfoPath =GetFilePath(pdfpath)+GetMainFileName(pdfpath)+".xml";
+			if (ExistFile(pdfpath) &&ExistFile(docInfoPath))
+			{
+				zip.ZipFile(pdfpath, NULL);
+				auto NewFileName =GetFilePath(pdfpath)+"docInfo.xml";
+				rename(docInfoPath,NewFileName);
+				zip.ZipFile(NewFileName, NULL);
+			}
+			
 			zip.ZipFile(strNewSubPath + "Proc.xml", NULL);
 			zip.ZipFile(strNewSubPath + "mbom.xml", NULL);
-
 		}
 		zip.CloseZipFile();
+
+
+		if (!m_FTPInterface.Connect(CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), CWindChillSetting::GetStrFTPUserName(), CWindChillSetting::GetStrFTPPasswd()))
+		{
+			MessageBox(NULL, _T("ftp连接失败！"), APS_MSGBOX_TITIE, MB_OK);
+			return;
+		}
+
+
 		strFileName = GetFileName(zipPath);
 		BOOL bSucc = m_FTPInterface.UpLoad(zipPath, CWindChillSetting::GetStrFTPURL(), CWindChillSetting::GetStrFTPPort(), strRelDir, strFileName);
 		if (!bSucc)
@@ -2252,7 +2453,6 @@ LAST:
 STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 {
 	IAPSDocumentPtr doc = m_pApplication->GetCurrentDocment();
-
 
 	if (!doc)
 	{
@@ -2414,11 +2614,25 @@ STDMETHODIMP CwindchillObject::OnPluginCommand(long nID)
 		}
 		else if (nID==m_CollectCmd)
 		{
-			CDlgCollect dlg;
-			dlg.DoModal();
+			if (pModel)
+			{
+				CDlgCollect dlg(m_pApplication);
+				if (dlg.DoModal()==IDOK)
+				{
+				}
+			}
+			
 		}
 		else if (nID ==m_ChangeCmd)
 		{
+			if (pModel)
+			{
+				CDlgChange dlg(m_pApplication);
+				if (dlg.DoModal()==IDOK)
+				{
+				}
+				
+			}
 		}
 		return S_OK;
 }
@@ -2440,8 +2654,6 @@ STDMETHODIMP CwindchillObject::OnUpdatePluginCommandUI(long nID, long* state)
 		}
 
 		CAPSModel *pModel = (CAPSModel*)doc->GetAPSModel();
-	
-		
 		auto isshowImportEquies = false;
 		auto isshowUpdatePart = false;
 
@@ -2453,6 +2665,7 @@ STDMETHODIMP CwindchillObject::OnUpdatePluginCommandUI(long nID, long* state)
 		{
 			isshowUpdatePart = true;
 		}
+
 		/*
 		if (arrayImportEquies->GetCount() > 0)
 		{
@@ -2632,9 +2845,6 @@ STDMETHODIMP CwindchillObject::OnMainFrameCreated()
 	pBtn61->put_Label(_bstr_t("更改单"));
 	m_ChangeCmd = pBtn61->GetCmdID();		//记录命令ID
 	pPanel6->AddChild(pBtn61);
-
-	
-
 
 	pTab->put_Label(_bstr_t(_T("Windchill集成")));
 	pTab->AddGroup(pPanel1);

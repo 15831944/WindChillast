@@ -460,6 +460,7 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 	{
 		if (QueryType_EBOM == m_nQueryType)
 		{
+
 			CString strXmlcontent = m_WebServiceInterface.getBom(operType, partNumber);
 			m_PBOMxml.Parse(strXmlcontent.GetBuffer());
 			strXmlcontent.ReleaseBuffer();
@@ -874,13 +875,11 @@ BOOL CDlgPBOMEdit::GetDataFromWebService(int nRow)
 							auto name = GetMainFileName(fullpath);
 							if (name.CompareNoCase("Pbom") == 0)
 							{
-
 								CPbomCreate PbomCreate(fullpath, partNumber);
 
 								PbomCreate.CreatePbom();
 								strXml =GetFilePath(fullpath)+"files\\Pbom.xml";
 								documentAnsiToutf8(strXml);
-
 							}
 						}
 					}

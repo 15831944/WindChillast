@@ -51,6 +51,11 @@
 #endif
 
 #include <vector>
+#include <afxcontrolbars.h>
+
+//#include <BCGCBProInc.h>
+
+//#pragma comment(lib,"Output3DPdf1.lib")
 
 #import "..\include\kmapstool.tlb" no_namespace, named_guids
 #import "..\include\PSM.tlb" no_namespace, named_guids
@@ -66,6 +71,8 @@
 	rename("ParameterDirectionEnum","adoParameterDirectionEnum")
 
 #import "..\include\Common.tlb" no_namespace, named_guids
+
+
 
 #define VOID_PTR		byte*
 

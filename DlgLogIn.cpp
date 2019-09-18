@@ -66,7 +66,6 @@ void CDlgLogIn::OnLoginWindChill()
 		"</wc:INSTANCE>"\
 		"</Login>" \
 		"</wc:COLLECTION>";*/
-
 	CWebServiceInterface WebServiceInterface;
 	CString XmlContent = WebServiceInterface.checkLogin(strName, strPass);
 	bool bSucess = CWindChillXml::ParseResult(XmlContent);
